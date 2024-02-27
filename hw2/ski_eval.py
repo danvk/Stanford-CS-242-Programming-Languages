@@ -8,14 +8,15 @@ import src.ski as ski
 def eval(e: ski.Expr) -> ski.Expr:
     # BEGIN_YOUR_CODE
     # print(e)
-    seen = {str(e)}
+    last = str(e)  # seen = {str(e)}
     while True:
         e = rewrite_one(e)
         s = str(e)
-        if s in seen:  # protects against infinite rewrite loops
+        if last == s:  # protects against infinite rewrite loops
             # print('  done')
             break
-        seen.add(s)
+        last = s
+        # seen.add(s)
         # print('  -> ', e)
 
     return e
