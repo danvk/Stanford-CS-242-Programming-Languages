@@ -35,7 +35,9 @@ I had to optimize `ski_eval.py` a bit to get Fibonacci to run. I Ctrl-C'd fib(3)
 KeyboardInterrupt
 ```
 
-So `ski_eval.py` was spending all its time formatting SKI expressions. I'd set it up this way as a cheap "deep equals" for the last homework. But since we're not concerned with infinite loops here, I was able to rewrite it to use reference equality for a dramatic speedup. Still not fast, but better!
+So `ski_eval.py` was spending all its time formatting SKI expressions. I'd set it up this way as a cheap "deep equals" for the last homework. But since we're not concerned with infinite loops here, I [was able to rewrite it][rewrite] to use reference equality for a dramatic speedup. Still not fast, but better!
+
+I'm able to run `problem.ski` in ~5 minutes.
 
 - `is_zero` is straightforward
 - `len`
@@ -59,3 +61,4 @@ So `ski_eval.py` was spending all its time formatting SKI expressions. I'd set i
   - Step: `(is_even, count) -> (!is_even, count + is_even ? 1 : 0)`, base: `(0, 0)`
 
 [match]: https://peps.python.org/pep-0636/#pep-636-appendix-a
+[rewrite]: https://github.com/danvk/Stanford-CS-242-Programming-Languages/commit/a79d2e996455bdc9a344851e336a5e5ff8113e64
