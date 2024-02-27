@@ -30,7 +30,7 @@ def nil  = \f.\x. x;
 
 # BEGIN_YOUR_CODE
 def is_zero  = \n. n (\z. ff) tt;
-def len      = \l. l (\z. \a. inc a) _0;
+def len      = \l. l (\z. inc) _0;
 def num_zero = \l. l;
 def fib      = \n. n;
 def dec      = \n. n;
