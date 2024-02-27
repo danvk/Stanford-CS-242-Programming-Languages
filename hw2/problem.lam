@@ -61,30 +61,30 @@ section_is_zero; # This symbol will just be printed, so we can keep track of the
 
 section_len;
 (len nil) f x;                                # x
-# (len (cons tt nil)) f x;                      # (f x)
-# (len (cons tt (cons ff nil))) f x;            # (f (f x))
-# (len (cons tt (cons ff (cons tt nil)))) f x;  # (f (f (f x)))
+(len (cons tt nil)) f x;                      # (f x)
+(len (cons tt (cons ff nil))) f x;            # (f (f x))
+(len (cons tt (cons ff (cons tt nil)))) f x;  # (f (f (f x)))
 
 section_num_zero;
 (num_zero nil) f x;                      # x
-# (num_zero (cons _1 nil)) f x;            # x
-# (num_zero (cons _0 nil)) f x;            # (f x)
-# (num_zero (cons _0 (cons _1 nil))) f x;  # (f x)
-# (num_zero (cons _0 (cons _0 nil))) f x;  # (f (f x))
+(num_zero (cons _1 nil)) f x;            # x
+(num_zero (cons _0 nil)) f x;            # (f x)
+(num_zero (cons _0 (cons _1 nil))) f x;  # (f x)
+(num_zero (cons _0 (cons _0 nil))) f x;  # (f (f x))
 
 section_fib;
-# (fib _0) f x;  # (f x)
-# (fib _1) f x;  # (f (f x))
-# (fib _2) f x;  # (f (f (f x)))
-# (fib _3) f x;  # (f (f (f (f (f x)))))
-# (fib _4) f x;  # (f (f (f (f (f (f (f (f x))))))))
+(fib _0) f x;  # (f x)
+(fib _1) f x;  # (f (f x))
+(fib _2) f x;  # (f (f (f x)))
+(fib _3) f x;  # (f (f (f (f (f x)))))
+(fib _4) f x;  # (f (f (f (f (f (f (f (f x))))))))
 
 section_dec;
-# (dec _0) f x;  # x
-# (dec _1) f x;  # x
-# (dec _2) f x;  # (f x)
-# (dec _3) f x;  # (f (f x))
-# (dec _4) f x;  # (f (f (f x)))
+(dec _0) f x;  # x
+(dec _1) f x;  # x
+(dec _2) f x;  # (f x)
+(dec _3) f x;  # (f (f x))
+(dec _4) f x;  # (f (f (f x)))
 
 section_not;
 (not tt) x y;  # y
