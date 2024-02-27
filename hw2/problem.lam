@@ -42,7 +42,9 @@ def fib      = \n. snd (n fib1 (pair _1 _1));
 def dec1     = \acc. pair (snd acc) (inc (snd acc));
 def dec      = \n. fst (n dec1 (pair _0 _0));
 
-def half     = \n. n;
+def not      = \b. b ff tt;
+def is_even  = \n. n not tt;
+def half     = \n. n (\acc. (is_even n) (inc acc) acc) _0;
 
 # END_YOUR_CODE
 
@@ -78,11 +80,21 @@ section_fib;
 # (fib _4) f x;  # (f (f (f (f (f (f (f (f x))))))))
 
 section_dec;
-(dec _0) f x;  # x
-(dec _1) f x;  # x
-(dec _2) f x;  # (f x)
-(dec _3) f x;  # (f (f x))
-(dec _4) f x;  # (f (f (f x)))
+# (dec _0) f x;  # x
+# (dec _1) f x;  # x
+# (dec _2) f x;  # (f x)
+# (dec _3) f x;  # (f (f x))
+# (dec _4) f x;  # (f (f (f x)))
+
+section_not;
+(not tt) x y;  # y
+(not ff) x y;  # x
+
+section_is_even;
+(is_even _0) x y;  # x
+(is_even _1) x y;  # y
+(is_even _2) x y;  # x
+(is_even _3) x y;  # y
 
 section_half;
 (half _0) f x;  # x
