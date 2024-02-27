@@ -33,18 +33,21 @@ def is_zero  = \n. n (\z. ff) tt;
 def len      = \l. l (\z. inc) _0;
 def num_zero = \l. l (\el. \acc. (is_zero el) (inc acc) acc) _0;
 
+# helpers
 def add      = \m.\n. m inc n;
+def not      = \b. b ff tt;
+
 # acc = (fib(n-2), fib(n-1))
 def fib1     = \acc. pair (snd acc) (add (fst acc) (snd acc));
-
 def fib      = \n. snd (n fib1 (pair _1 _1));
 
+# acc = (n-1, n)
 def dec1     = \acc. pair (snd acc) (inc (snd acc));
 def dec      = \n. fst (n dec1 (pair _0 _0));
 
-def not      = \b. b ff tt;
-def is_even  = \n. n not tt;
-def half     = \n. n (\acc. (is_even n) (inc acc) acc) _0;
+# acc = (is_even?, result)
+def half1    = \acc. pair (not (fst acc)) ((fst acc) (inc (snd acc)) (snd acc));
+def half     = \n. snd (n half1 (pair ff _0));
 
 # END_YOUR_CODE
 
@@ -85,16 +88,6 @@ section_dec;
 (dec _2) f x;  # (f x)
 (dec _3) f x;  # (f (f x))
 (dec _4) f x;  # (f (f (f x)))
-
-section_not;
-(not tt) x y;  # y
-(not ff) x y;  # x
-
-section_is_even;
-(is_even _0) x y;  # x
-(is_even _1) x y;  # y
-(is_even _2) x y;  # x
-(is_even _3) x y;  # y
 
 section_half;
 (half _0) f x;  # x
