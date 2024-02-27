@@ -29,7 +29,7 @@ def nil  = \f.\x. x;
 # TASK: Implement the following functions.
 
 # BEGIN_YOUR_CODE
-def is_zero  = \n. n;
+def is_zero  = \n. n (\z. ff) tt;
 def len      = \l. l;
 def num_zero = \l. l;
 def fib      = \n. n;
