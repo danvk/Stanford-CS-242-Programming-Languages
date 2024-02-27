@@ -31,7 +31,7 @@ def nil  = \f.\x. x;
 # BEGIN_YOUR_CODE
 def is_zero  = \n. n (\z. ff) tt;
 def len      = \l. l (\z. inc) _0;
-def num_zero = \l. l;
+def num_zero = \l. l (\el. \acc. (is_zero el) (inc acc) acc) _0;
 def fib      = \n. n;
 def dec      = \n. n;
 def half     = \n. n;
