@@ -39,14 +39,16 @@ def rewrite_app(app: ski.App) -> tuple[bool, ski.Expr]:
             return True, e1.e2
         elif isinstance(e1.e1, ski.App):
             if isinstance(e1.e1.e1, ski.S):
-                return True, rewrite_s(e1.e1.e2, e1.e2, e2)
+                se1 = e1.e1.e2
+                se2 = e1.e2
+                se3 = e2
+                # We can't do this because app.e1 may be referenced elsewhere
+                # app.e1.e1 = se1
+                # app.e1.e2 = se3
+                app.e1 = ski.App(se1, se3)
+                app.e2 = ski.App(se2, se3)
+                return True, app
 
     app.e1 = e1
     app.e2 = e2
     return changed, app
-
-def rewrite_s(e1: ski.Expr, e2: ski.Expr, e3: ski.Expr) -> ski.Expr:
-    return ski.App(
-        ski.App(e1, e3),
-        ski.App(e2, e3),
-    )

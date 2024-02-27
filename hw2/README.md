@@ -39,7 +39,7 @@ So `ski_eval.py` was spending all its time formatting SKI expressions. I'd set i
 
 I'm able to run `problem.ski` in ~5 minutes.
 
-Rylan's code runs in ~2 minutes! His `problem.lam` is nearly identical. So is his `ski_eval.py` just that much faster? Yes. He's still using string comparison, but he's mutating `ski.App` objects in-place rather than treating them as immutable. Applying that optimization to my `ski_eval.py` gets me down to ~39 seconds. Nearly TA-level performance!
+Rylan's code runs in ~2 minutes! His `problem.lam` is nearly identical. So is his `ski_eval.py` just that much faster? Yes. He's still using string comparison, but he's mutating `ski.App` objects in-place rather than treating them as immutable. Applying that optimization to my `ski_eval.py` gets me down to ~39 seconds. Nearly TA-level performance! Using mutation within `rewrite_s` gets me all the way down to ~2 seconds. WOW!
 
 - `is_zero` is straightforward
 - `len`
