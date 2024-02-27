@@ -30,17 +30,17 @@ def rewrite_one(e: ski.Expr) -> ski.Expr:
 
 
 def rewrite_app(app: ski.App) -> ski.Expr:
-    if isinstance(app.e1, ski.I):
-        return app.e2
-    elif isinstance(app.e1, ski.App):
-        if isinstance(app.e1.e1, ski.K):
-            return app.e1.e2
-        elif isinstance(app.e1.e1, ski.App):
-            if isinstance(app.e1.e1.e1, ski.S):
-                return rewrite_s(app.e1.e1.e2, app.e1.e2, app.e2)
-
     e1 = rewrite_one(app.e1)
     e2 = rewrite_one(app.e2)
+    if isinstance(e1, ski.I):
+        return e2
+    elif isinstance(e1, ski.App):
+        if isinstance(e1.e1, ski.K):
+            return e1.e2
+        elif isinstance(e1.e1, ski.App):
+            if isinstance(e1.e1.e1, ski.S):
+                return rewrite_s(e1.e1.e2, e1.e2, e2)
+
     if e1 == app.e1 and e2 == app.e2:
         return app
     else:

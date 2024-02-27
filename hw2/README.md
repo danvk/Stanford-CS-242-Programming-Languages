@@ -39,6 +39,8 @@ So `ski_eval.py` was spending all its time formatting SKI expressions. I'd set i
 
 I'm able to run `problem.ski` in ~5 minutes.
 
+Rylan's code runs in ~2 minutes! His `problem.lam` is nearly identical. So is his `ski_eval.py` just that much faster?
+
 - `is_zero` is straightforward
 - `len`
   - This requires me to understand the list constructors.
