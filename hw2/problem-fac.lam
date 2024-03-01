@@ -1,0 +1,126 @@
+###############
+# DEFINITIONS #
+###############
+
+# Live group programming during weekly meeting.
+
+# Bool
+def tt   = \x.\y. x;
+def ff   = \x.\y. y;
+
+# Numeral
+def inc  = \n.\f.\x. f (n f x);
+def _0   = \f.\x. x;  # x
+def _1   = inc _0;    # f(x)
+def _2   = inc _1;    # f(f(x))
+def _3   = inc _2;    # f(f(f(x)))
+def _4   = inc _3;    # f(f(f(f(x))))
+
+# Pair
+def pair = \x.\y.\f. f x y;
+def fst  = \p. p tt;
+def snd  = \p. p ff;
+
+# List
+def cons = \h.\t.\f.\x. f h (t f x);
+def nil  = \f.\x. x;
+
+##########
+# PART 4 #
+##########
+# TASK: Implement the following functions.
+
+# BEGIN_YOUR_CODE
+#                    f  x
+def is_zero  = \n. n (\z. ff) tt;
+
+def len      = \l. l (\el. inc) _0;
+
+# helpers
+def add      = \m.\n. m inc n;
+def mul      = \m.\n. m (add n) _0;
+def not      = \b. b ff tt;
+
+def id       = \x. x;
+def num_zero = \l. l (\h. ((is_zero h) inc id)) _0;
+
+# acc = (n,   (n-1)!)
+#       (n+1, n*(n-1)!)
+#   fac_help (pair _1 _1)
+# -> pair _2 _1*_1
+# -> pair
+def fac_help = \p. pair (inc (fst p)) (mul (snd p) (fst p));
+def fac      = \n. snd (n fac_help (pair _1 _1));
+
+#    (pair _0 _1)
+# -> (pair _1 (mul _1 (inc _0))) = (pair _1 _1)
+# -> (pair _2 (mul _1 _2)) = (pair _2 _2)
+# -> (pair _3 (mul _2 _3)) = (pair _3 _6)
+
+def fib      = \n. n;
+
+def dec      = \n. n;
+def half     = \n. n;
+
+# END_YOUR_CODE
+
+#########
+# TESTS #
+#########
+# NOTE: Expected outputs are given as comments on each line.
+
+# section_tt_ff;
+# tt x y;  # x
+# ff x y;  # y
+
+# section_is_zero; # This symbol will just be printed, so we can keep track of the output.
+# (is_zero _0) x y;  # x
+# (is_zero _1) x y;  # y
+# (is_zero _2) x y;  # y
+# (is_zero _3) x y;  # y
+
+# section_len;
+# (len nil) f x;                                # x
+# (len (cons tt nil)) f x;                      # (f x)
+# (len (cons tt (cons ff nil))) f x;            # (f (f x))
+# (len (cons tt (cons ff (cons tt nil)))) f x;  # (f (f (f x)))
+
+# section_num_zero;
+# (num_zero nil) f x;                      # x
+# (num_zero (cons _1 nil)) f x;            # x
+# (num_zero (cons _0 nil)) f x;            # (f x)
+# (num_zero (cons _0 (cons _1 nil))) f x;  # (f x)
+# (num_zero (cons _0 (cons _0 nil))) f x;  # (f (f x))
+
+section_add_mul;
+# (add _1 _2) f x;
+(mul _2 _3) f x;
+
+section_fac;
+(fac _0) f x;  # 0! = 1 (f x)
+(fac _1) f x;  # 1! = 1 (f x)
+(fac _2) f x;  # 2! = 2 (f (f x))
+(fac _3) f x;  # 3! = 6 (f (f (f (f (f (f x))))))
+# (fac _4) f x;  # (f (f (f (f (f (f (f (f x))))))))
+
+# section_fib;
+# (fib _0) f x;  # (f x)
+# (fib _1) f x;  # (f (f x))
+# (fib _2) f x;  # (f (f (f x)))
+# (fib _3) f x;  # (f (f (f (f (f x)))))
+# (fib _4) f x;  # (f (f (f (f (f (f (f (f x))))))))
+#
+# section_dec;
+# (dec _0) f x;  # x
+# (dec _1) f x;  # x
+# (dec _2) f x;  # (f x)
+# (dec _3) f x;  # (f (f x))
+# (dec _4) f x;  # (f (f (f x)))
+#
+# section_half;
+# (half _0) f x;  # x
+# (half _1) f x;  # x
+# (half _2) f x;  # (f x)
+# (half _3) f x;  # (f x)
+# (half _4) f x;  # (f (f x))
+#
