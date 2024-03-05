@@ -4,8 +4,8 @@ from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
     A = gen_constraints_prog(prog)
-    # print(A)
-    # print(type_constraints)
+    # print(f'{A=}')
+    # print(f'S={type_constraints}')
     saturate(type_constraints)
     # print(type_constraints)
     # for left, right in type_constraints:
@@ -38,10 +38,10 @@ type_constraints: set[tuple[Type, Type]] = set()
 
 def gen_constraints(A: dict[str, Type], e: Expr) -> Type:
     match e:
-        case Var(s=s) if s in A:
-            return A[s]
         case Var(s=s) if s in CONSTS:
             return CONSTS[s]
+        case Var(s=s) if s in A:
+            return A[s]
         case Var(s=s):
             # free variable
             raise TypecheckingError(f'undefined variable {s}')
