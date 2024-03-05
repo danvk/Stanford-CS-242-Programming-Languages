@@ -116,12 +116,11 @@ canonicalizing = set()
 
 def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
     global canonicalizing
-    if type in canonicalizing:
-        canonicalizing = set()
-        raise TypecheckingError("infinite")
-    canonicalizing.add(type)
+    try:
+        if type in canonicalizing:
+            raise TypecheckingError("infinite")
+        canonicalizing.add(type)
 
-    def get_type():
         match type:
             case IntTp():
                 return type
@@ -139,6 +138,10 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
                 return type
         raise ValueError(type)
 
-    t = get_type()
-    canonicalizing.remove(type)
-    return t
+    except (TypecheckingError, ValueError) as e:
+        canonicalizing = set()
+        canonicalizing.add(type)
+        raise e
+
+    finally:
+        canonicalizing.remove(type)
