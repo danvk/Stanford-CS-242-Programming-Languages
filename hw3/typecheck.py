@@ -4,12 +4,7 @@ from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
     A = gen_constraints_prog(prog)
-    print(f'{A=}')
-    # print(f'S={type_constraints}')
     saturate(type_constraints)
-    # print(type_constraints)
-    # for left, right in type_constraints:
-    #     print(f'{left} = {right}')
     if is_ill_typed(type_constraints):
         raise TypecheckingError("ill-typed")
 
@@ -22,8 +17,6 @@ def typecheck(prog: Prog) -> List[Type]:
     types = [
         canonicalize(type_constraints, A[defn.s]) for defn in prog.defns
     ]
-    # for defn, type in zip(prog.defns, types):
-    #     print(f'{defn.s}: {type}')
     return types
 
 
@@ -70,6 +63,8 @@ def gen_constraints(A: dict[str, Type], e: Expr) -> Type:
 
 def gen_constraints_prog(prog: Prog):
     global type_constraints
+    global n
+    n = -1
     type_constraints = set()
     A = {}
     for defn in prog.defns:
