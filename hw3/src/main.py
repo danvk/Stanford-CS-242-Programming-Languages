@@ -16,7 +16,7 @@ lam_parser = Lark(lam_syntax, start='start', parser='lalr')
 env = {}
 
 def lam_to_prog(fname, type_check, execute, echo_name: bool = False):
-    
+
     try:
         text = Path(fname).read_text()
     except Exception as err:
@@ -64,10 +64,10 @@ def lam_to_prog(fname, type_check, execute, echo_name: bool = False):
             eval_lam(prog)
         except lam.TypecheckingError as e:
             print(f">>> Warning: file {fname} runtime produced an error: {e} <<<")
-            
 
-        
-    
+
+
+
 if __name__ == "__main__":
     argparser = argparse.ArgumentParser()
     argparser.add_argument("input", nargs='+', type=str, help="file")

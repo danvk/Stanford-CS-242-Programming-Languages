@@ -44,7 +44,7 @@ def gen_constraints(A: dict[str, Type], e: Expr) -> Type:
             return CONSTS[s]
         case Var(s=s):
             # free variable
-            raise KeyError(s)
+            raise TypecheckingError(f'undefined variable {s}')
         case IntConst():
             return IntTp()
         case Lam(s=s, e=e):
