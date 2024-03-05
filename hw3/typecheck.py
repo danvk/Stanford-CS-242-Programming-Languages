@@ -4,15 +4,14 @@ from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
     A = gen_constraints_prog(prog)
-    print(A)
-    print(type_constraints)
+    # print(A)
+    # print(type_constraints)
     saturate(type_constraints)
     # print(type_constraints)
-    for left, right in type_constraints:
-        print(f'{left} = {right}')
+    # for left, right in type_constraints:
+    #     print(f'{left} = {right}')
     if is_ill_typed(type_constraints):
         raise TypecheckingError("ill-typed")
-
 
     for left, _ in type_constraints:
         canonicalize(type_constraints, left)
@@ -22,8 +21,8 @@ def typecheck(prog: Prog) -> List[Type]:
     types = [
         canonicalize(type_constraints, A[defn.s]) for defn in prog.defns
     ]
-    for defn, type in zip(prog.defns, types):
-        print(f'{defn.s}: {type}')
+    # for defn, type in zip(prog.defns, types):
+    #     print(f'{defn.s}: {type}')
     return types
 
 
