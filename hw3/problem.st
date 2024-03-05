@@ -4,11 +4,12 @@ def _0 = \f.\z. z;  # (int -> int) -> int -> int
 def _1 = inc _0;    # (int -> int) -> int -> int
 def _2 = inc _1;    # (int -> int) -> int -> int
 
-# def to_church = \n. ifz n _0 (inc (to_church (- n 1)))
-
 # Should return a church encoding of the sum of n and m
-# maybe I can't use inc?
-def sum = \n. \m. \f. \z. (n f (m f z));
+# Must have:
+# z: int
+# f: int -> int
+# So we can't use inc with the church-encoded z=_0.
+def sum = \n. \m. \f. \z. n f (m f z);
 
 # Should take a church encoded number and produce a regular int.
 def value = \n. n (\x. + x 1) 0;
