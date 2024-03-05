@@ -8,8 +8,8 @@ def typecheck(prog: Prog) -> List[Type]:
     print(type_constraints)
     saturate(type_constraints)
     print(type_constraints)
-    # if is_ill_typed(S):
-    #     raise TypecheckingError("ill-typed")
+    if is_ill_typed(type_constraints):
+        raise TypecheckingError("ill-typed")
     # if is_infinite(S):
     #     raise TypecheckingError("infinite")
 
@@ -91,3 +91,13 @@ def saturate(S: set[tuple[TpVar, Type]]):
             if constraint not in S:
                 any_new = True
                 S.add(constraint)
+
+
+def is_ill_typed(S: set[tuple[TpVar, Type]]):
+    # look for (t -> t' = int) in S
+    for left, right in S:
+        if right == IntTp() and isinstance(left, Func):
+            print(f'Found {left} = {right}; ill-typed')
+            return True
+
+    return False
