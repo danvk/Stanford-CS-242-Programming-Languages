@@ -3,10 +3,11 @@ from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, Prog, TpVar, 
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
-    S = gen_constraints_prog(prog)
-    print(S)
+    A = gen_constraints_prog(prog)
+    print(A)
     print(type_constraints)
-    # S = saturate(S)
+    saturate(type_constraints)
+    print(type_constraints)
     # if is_ill_typed(S):
     #     raise TypecheckingError("ill-typed")
     # if is_infinite(S):
@@ -67,3 +68,26 @@ def gen_constraints_prog(prog: Prog):
         t = gen_constraints(A, defn.e)
         A[defn.s] = t
     return A
+
+
+def saturate(S: set[tuple[TpVar, Type]]):
+    """operates in-place"""
+    any_new = True
+    while any_new:
+        any_new = False
+        to_add = set()
+        for left, right in S:
+            to_add.add((right, left))  # refl
+            match (left, right):
+                case (Func(a=t1, b=t2), Func(a=t3, b=t4)):
+                    # struct
+                    to_add.add((t1, t3))
+                    to_add.add((t2, t4))
+            other_rights = [r for (l, r) in S if l == left and r != right]
+            for r in other_rights:
+                to_add.add((right, r))
+
+        for constraint in to_add:
+            if constraint not in S:
+                any_new = True
+                S.add(constraint)
