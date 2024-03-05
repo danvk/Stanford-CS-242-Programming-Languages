@@ -12,7 +12,7 @@ def _2 = inc _1;    # (int -> int) -> int -> int
 def sum = \n. \m. \f. \z. n f (m f z);
 
 # Should take a church encoded number and produce a regular int.
-def value = \n. n (\x. + x 1) 0;
+def value = \n. n (+ 1) 0;
 
 # Should take two ints x y and produce 1 if x is divisible by y, 0 otherwise
 def is_div = \x. \y. ifz (- x (* (/ x y) y)) 1 0;
