@@ -4,7 +4,7 @@ from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
     A = gen_constraints_prog(prog)
-    # print(f'{A=}')
+    print(f'{A=}')
     # print(f'S={type_constraints}')
     saturate(type_constraints)
     # print(type_constraints)
@@ -15,6 +15,7 @@ def typecheck(prog: Prog) -> List[Type]:
 
     for left, _ in type_constraints:
         canonicalize(type_constraints, left)
+        assert len(canonicalizing) == 0, f'{canonicalizing=}'
 
     # If there are no type errors, return a list of Types
     # returns a list of Types, one for each definition
@@ -92,7 +93,7 @@ def saturate(S: set[tuple[TpVar, Type]]):
                     to_add.add((t2, t4))
             other_rights = [r for (l, r) in S if l == left and r != right]
             for r in other_rights:
-                to_add.add((right, r))
+                to_add.add((right, r))  # trans
 
         for constraint in to_add:
             if constraint not in S:
@@ -116,8 +117,10 @@ canonicalizing = set()
 def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
     global canonicalizing
     if type in canonicalizing:
+        canonicalizing = set()
         raise TypecheckingError("infinite")
     canonicalizing.add(type)
+
     def get_type():
         match type:
             case IntTp():
@@ -128,7 +131,7 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
                 equivs = [right for left, right in S if left == type]
                 for t in equivs:
                     if not isinstance(t, TpVar):
-                        return t
+                        return canonicalize(S, t)
                 for t in equivs:
                     assert isinstance(t, TpVar)
                     if t.s < s:
