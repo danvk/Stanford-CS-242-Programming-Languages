@@ -18,7 +18,12 @@ def typecheck(prog: Prog) -> List[Type]:
         canonicalize(type_constraints, left)
 
     # If there are no type errors, return a list of Types
-    types = []
+    # returns a list of Types, one for each definition
+    types = [
+        canonicalize(type_constraints, A[defn.s]) for defn in prog.defns
+    ]
+    for defn, type in zip(prog.defns, types):
+        print(f'{defn.s}: {type}')
     return types
 
 
