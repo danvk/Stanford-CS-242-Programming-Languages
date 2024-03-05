@@ -43,8 +43,7 @@ def gen_constraints(A: dict[str, Type], e: Expr) -> Type:
             return IntTp()
         case Lam(s=s, e=e):
             prev = A.get(s)
-            # s only has this type in this scope.
-            # Unclear to me if they want us to track this.
+            # s only has this type in this scope, so we need to reset it after.
             alpha = get_fresh_type()
             A[s] = alpha
             t = gen_constraints(A, e)
@@ -121,21 +120,20 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
                 return type
             case Func(a=a, b=b):
                 return Func(canonicalize(S, a), canonicalize(S, b))
-            case TpVar(s=s):
+            case TpVar():
                 equivs = [right for left, right in S if left == type]
                 for t in equivs:
                     if not isinstance(t, TpVar):
                         return canonicalize(S, t)
-                for t in equivs:
-                    assert isinstance(t, TpVar)
-                    if t.s < s:
-                        return t
+                if equivs:
+                    for t in equivs:
+                        assert isinstance(t, TpVar)
+                    return min(equivs, key=lambda t: t.s)
                 return type
         raise ValueError(type)
 
     except (TypecheckingError, ValueError) as e:
-        canonicalizing = set()
-        canonicalizing.add(type)
+        canonicalizing = {type}  # gets cleared below
         raise e
 
     finally:
