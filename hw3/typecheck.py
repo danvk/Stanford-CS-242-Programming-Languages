@@ -7,16 +7,19 @@ def typecheck(prog: Prog) -> List[Type]:
     print(A)
     print(type_constraints)
     saturate(type_constraints)
-    print(type_constraints)
+    # print(type_constraints)
+    for left, right in type_constraints:
+        print(f'{left} = {right}')
     if is_ill_typed(type_constraints):
         raise TypecheckingError("ill-typed")
-    # if is_infinite(S):
-    #     raise TypecheckingError("infinite")
 
-    # C = canonicalize(S)
+
+    for left, _ in type_constraints:
+        canonicalize(type_constraints, left)
+
     # If there are no type errors, return a list of Types
-    # Otherwise,
-    raise TypecheckingError('not implemented')
+    types = []
+    return types
 
 
 n = -1
@@ -26,7 +29,7 @@ def get_fresh_type():
     return TpVar(f'a{n}')
 
 
-type_constraints: set[tuple[TpVar, Func]] = set()
+type_constraints: set[tuple[Type, Type]] = set()
 
 
 def gen_constraints(A: dict[str, Type], e: Expr) -> Type:
@@ -101,3 +104,34 @@ def is_ill_typed(S: set[tuple[TpVar, Type]]):
             return True
 
     return False
+
+
+canonicalizing = set()
+
+
+def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
+    global canonicalizing
+    if type in canonicalizing:
+        raise TypecheckingError("infinite")
+    canonicalizing.add(type)
+    def get_type():
+        match type:
+            case IntTp():
+                return type
+            case Func(a=a, b=b):
+                return Func(canonicalize(S, a), canonicalize(S, b))
+            case TpVar(s=s):
+                equivs = [right for left, right in S if left == type]
+                for t in equivs:
+                    if not isinstance(t, TpVar):
+                        return t
+                for t in equivs:
+                    assert isinstance(t, TpVar)
+                    if t.s < s:
+                        return t
+                return type
+        raise ValueError(type)
+
+    t = get_type()
+    canonicalizing.remove(type)
+    return t
