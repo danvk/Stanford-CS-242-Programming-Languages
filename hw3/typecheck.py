@@ -3,7 +3,7 @@ from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, Prog, TpVar, 
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
-    A, S = gen_constraints_prog(prog)
+    A, S = get_prog_env_and_constraints(prog)
     saturate(S)
     check_ill_typed(S)
 
@@ -22,11 +22,16 @@ def get_fresh_type():
     return TpVar(f'a{n}')
 
 
-def gen_constraints(
+def get_type_and_constraints(
     A: dict[str, Type],
     e: Expr,
     S: set[tuple[Type, Type]],
 ) -> Type:
+    """Get the type of e according to the environment A.
+
+    This may return a fresh type variable if doesn't have a type in A.
+    S is an output variable of constraints.
+    """
     match e:
         case Var(s=s) if s in CONSTS:
             return CONSTS[s]
@@ -38,37 +43,31 @@ def gen_constraints(
         case IntConst():
             return IntTp()
         case Lam(s=s, e=e):
-            prev = A.get(s)
-            # s only has this type in this scope, so we need to reset it after.
             alpha = get_fresh_type()
-            A[s] = alpha
-            t = gen_constraints(A, e, S)
-            if prev:
-                A[s] = prev
-            else:
-                del A[s]
+            t = get_type_and_constraints({**A, s: alpha}, e, S)
             return Func(alpha, t)
         case App(e1=e1, e2=e2):
             beta = get_fresh_type()
-            tau = gen_constraints(A, e1, S)
-            tau_p = gen_constraints(A, e2, S)
+            tau = get_type_and_constraints(A, e1, S)
+            tau_p = get_type_and_constraints(A, e2, S)
             S.add((tau, Func(tau_p, beta)))
             return beta
 
 
-def gen_constraints_prog(prog: Prog):
+def get_prog_env_and_constraints(prog: Prog):
+    """Gather the environment and constraints for a program."""
     global n
     n = -1
     S = set()
     A = {}
     for defn in prog.defns:
-        t = gen_constraints(A, defn.e, S)
+        t = get_type_and_constraints(A, defn.e, S)
         A[defn.s] = t
     return A, S
 
 
 def saturate(S: set[tuple[TpVar, Type]]):
-    """operates in-place"""
+    """Saturate a set of constraints in-place."""
     any_new = True
     while any_new:
         any_new = False
@@ -91,7 +90,7 @@ def saturate(S: set[tuple[TpVar, Type]]):
 
 
 def check_ill_typed(S: set[tuple[TpVar, Type]]):
-    # look for (t -> t' = int) in S
+    """Look for (t -> t' = int) in S and throw if it's found."""
     for left, right in S:
         if right == IntTp() and isinstance(left, Func):
             raise TypecheckingError(f'ill-typed: Found {left} = {right}')
@@ -101,6 +100,10 @@ canonicalizing = set()
 
 
 def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
+    """Get the canonical form of the type according to a saturated set of constraints.
+
+    Throws if the type is infinite.
+    """
     global canonicalizing
     try:
         if type in canonicalizing:
