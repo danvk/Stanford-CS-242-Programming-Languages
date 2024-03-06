@@ -3,19 +3,18 @@ from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, Prog, TpVar, 
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
-    A = gen_constraints_prog(prog)
-    saturate(type_constraints)
-    if is_ill_typed(type_constraints):
+    A, S = gen_constraints_prog(prog)
+    saturate(S)
+    if is_ill_typed(S):
         raise TypecheckingError("ill-typed")
 
-    for left, _ in type_constraints:
-        canonicalize(type_constraints, left)
+    for left, _ in S:
+        canonicalize(S, left)
         assert len(canonicalizing) == 0, f'{canonicalizing=}'
 
-    # If there are no type errors, return a list of Types
-    # returns a list of Types, one for each definition
+    # If there are no type errors, return a list of Types, one for each definition
     types = [
-        canonicalize(type_constraints, A[defn.s]) for defn in prog.defns
+        canonicalize(S, A[defn.s]) for defn in prog.defns
     ]
     return types
 
@@ -27,10 +26,11 @@ def get_fresh_type():
     return TpVar(f'a{n}')
 
 
-type_constraints: set[tuple[Type, Type]] = set()
-
-
-def gen_constraints(A: dict[str, Type], e: Expr) -> Type:
+def gen_constraints(
+    A: dict[str, Type],
+    e: Expr,
+    S: set[tuple[Type, Type]],
+) -> Type:
     match e:
         case Var(s=s) if s in CONSTS:
             return CONSTS[s]
@@ -46,7 +46,7 @@ def gen_constraints(A: dict[str, Type], e: Expr) -> Type:
             # s only has this type in this scope, so we need to reset it after.
             alpha = get_fresh_type()
             A[s] = alpha
-            t = gen_constraints(A, e)
+            t = gen_constraints(A, e, S)
             if prev:
                 A[s] = prev
             else:
@@ -54,22 +54,21 @@ def gen_constraints(A: dict[str, Type], e: Expr) -> Type:
             return Func(alpha, t)
         case App(e1=e1, e2=e2):
             beta = get_fresh_type()
-            tau = gen_constraints(A, e1)
-            tau_p = gen_constraints(A, e2)
-            type_constraints.add((tau, Func(tau_p, beta)))
+            tau = gen_constraints(A, e1, S)
+            tau_p = gen_constraints(A, e2, S)
+            S.add((tau, Func(tau_p, beta)))
             return beta
 
 
 def gen_constraints_prog(prog: Prog):
-    global type_constraints
     global n
     n = -1
-    type_constraints = set()
+    S = set()
     A = {}
     for defn in prog.defns:
-        t = gen_constraints(A, defn.e)
+        t = gen_constraints(A, defn.e, S)
         A[defn.s] = t
-    return A
+    return A, S
 
 
 def saturate(S: set[tuple[TpVar, Type]]):
