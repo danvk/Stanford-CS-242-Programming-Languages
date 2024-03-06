@@ -3,15 +3,12 @@ from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, Prog, TpVar, 
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
-    A, S = get_prog_env_and_constraints(prog)
-    saturate(S)
-    check_ill_typed(S)
+    A = get_prog_env(prog)
 
-    # If there are no type errors, return a list of Types, one for each definition
-    types = []
-    for defn in prog.defns:
-        types.append(canonicalize(S, A[defn.s]))
-        assert len(canonicalizing) == 0, f'{canonicalizing=}'
+    for s, t in A.items():
+        print(f'{s}: {t}')
+
+    types = [*A.values()]
     return types
 
 
@@ -54,16 +51,21 @@ def get_type_and_constraints(
             return beta
 
 
-def get_prog_env_and_constraints(prog: Prog):
+def get_prog_env(prog: Prog):
     """Gather the environment and constraints for a program."""
     global n
     n = -1
-    S = set()
     A = {}
     for defn in prog.defns:
+        S = set()
         t = get_type_and_constraints(A, defn.e, S)
+        saturate(S)
+        check_ill_typed(S)
+        t = canonicalize(S, t)
+        t = finalize_type_vars(t, {})
         A[defn.s] = t
-    return A, S
+        assert len(canonicalizing) == 0, f'{canonicalizing=}'
+    return A
 
 
 def saturate(S: set[tuple[TpVar, Type]]):
@@ -133,3 +135,29 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
 
     finally:
         canonicalizing.remove(type)
+
+
+n_f = -1
+def get_fresh_final_type():
+    global n_f
+    n_f += 1
+    return TpVar(f't{n_f}')
+
+
+def is_final(t: TpVar):
+    return t.s.startswith('t')
+
+
+def finalize_type_vars(t: Type, map: dict[TpVar, TpVar]) -> Type:
+    match t:
+        case IntTp():
+            return t
+        case Func(a=a, b=b):
+            return Func(finalize_type_vars(a, map), finalize_type_vars(b, map))
+        case TpVar() if t in map:
+            return map[t]
+        case TpVar():
+            f = get_fresh_final_type()
+            map[t] = f
+            map[f] = f
+            return f
