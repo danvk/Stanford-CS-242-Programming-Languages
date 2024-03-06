@@ -5,8 +5,7 @@ from typing import List
 def typecheck(prog: Prog) -> List[Type]:
     A, S = gen_constraints_prog(prog)
     saturate(S)
-    if is_ill_typed(S):
-        raise TypecheckingError("ill-typed")
+    check_ill_typed(S)
 
     for left, _ in S:
         canonicalize(S, left)
@@ -94,14 +93,11 @@ def saturate(S: set[tuple[TpVar, Type]]):
                 S.add(constraint)
 
 
-def is_ill_typed(S: set[tuple[TpVar, Type]]):
+def check_ill_typed(S: set[tuple[TpVar, Type]]):
     # look for (t -> t' = int) in S
     for left, right in S:
         if right == IntTp() and isinstance(left, Func):
-            print(f'Found {left} = {right}; ill-typed')
-            return True
-
-    return False
+            raise TypecheckingError(f'ill-typed: Found {left} = {right}')
 
 
 canonicalizing = set()
