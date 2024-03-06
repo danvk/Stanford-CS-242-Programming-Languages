@@ -7,14 +7,11 @@ def typecheck(prog: Prog) -> List[Type]:
     saturate(S)
     check_ill_typed(S)
 
-    for left, _ in S:
-        canonicalize(S, left)
-        assert len(canonicalizing) == 0, f'{canonicalizing=}'
-
     # If there are no type errors, return a list of Types, one for each definition
-    types = [
-        canonicalize(S, A[defn.s]) for defn in prog.defns
-    ]
+    types = []
+    for defn in prog.defns:
+        types.append(canonicalize(S, A[defn.s]))
+        assert len(canonicalizing) == 0, f'{canonicalizing=}'
     return types
 
 
