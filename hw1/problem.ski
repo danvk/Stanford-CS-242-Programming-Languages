@@ -26,11 +26,18 @@ def c2 = ((S ((S (K S)) ((S (K K)) ((S (K S)) ((S ((S (K ((S (K S)) K))) I)) (K 
 # TASK: Implement the following functions.
 
 # BEGIN_YOUR_CODE
+# Found by running abstraction algorithm
 def or     = ((S ((S (K S)) ((S (K K)) ((S I) (K K))))) (K I));  # or: c2 (c1 (K c1) (c2 I (K K))) I;
 def and    = ((S ((S (K S)) ((S ((S (K S)) ((S (K K)) I))) (K I)))) (K (K (S K))));
 def not    = S (S I S) (K K);
-def is_odd = ((S ((S I) (K ((S ((S I) S)) (K K))))) (K (S K)));
+def is_odd = S ((S I) (K not)) (K ff);
 # END_YOUR_CODE
+
+# Rhea's solutions (found by hand -- more concise!):
+# def or = S I (K tt);
+# def and = S S K;
+# def not = S (S I (K ff)) (K tt);
+# def is_odd = S (S I (K not)) (K ff);
 
 #########
 # TESTS #
@@ -43,8 +50,12 @@ section_or; # This symbol will just be printed, so we can keep track of the outp
 (or ff tt) x y;  # x
 (or ff ff) x y;  # y
 
-section_and_abstract;
-x y ff;
+# section_and_abstract;
+# x y ff;
+
+# abstract_not;
+# x ff tt;
+# ((S ((S I) (K (S K)))) (K K));
 
 section_and;
 (and tt tt) x y;  # x

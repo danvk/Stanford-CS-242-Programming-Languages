@@ -5,7 +5,7 @@ import src.ski as ski
 ##########
 # TASK: Implement the below function `eval`.
 
-should_abstract = True
+should_abstract = False
 
 def eval(e: ski.Expr) -> ski.Expr:
     # BEGIN_YOUR_CODE
@@ -23,7 +23,7 @@ def eval(e: ski.Expr) -> ski.Expr:
     if should_abstract:
         ea = e
         vars = get_vars(ea)
-        if vars == {'x', 'y'} or vars == {'n'}:
+        if vars == {'x', 'y'} or vars == {'n'} or vars == {'x'}:
             while vars:
                 var = list(vars)[0]
                 vars.remove(var)
