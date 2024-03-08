@@ -5,8 +5,8 @@ from typing import List
 def typecheck(prog: Prog) -> List[Type]:
     A = get_prog_env(prog)
 
-    for s, t in A.items():
-        print(f'{s}: {t}')
+    # for s, t in A.items():
+    #     print(f'{s}: {t}')
 
     types = [*A.values()]
     return types
@@ -145,11 +145,22 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
         canonicalizing.remove(type)
 
 
+def get_polymorphic_type_var(i: int) -> TpVar:
+    c = chr(ord('a') + i)
+    return TpVar(f"'{c}")
+
+
 def generalize(env: dict[TpVar, PolymorphicType], type: Type) -> PolymorphicType:
-    vars = all_vars(type).difference(free_vars(env))
+    fv = free_vars(env)
+    vars = [v for v in all_vars_in_order(type) if v not in fv]
     if vars:
-        # TODO: relabel quantified variables here
-        return QuantifiedType(vars=vars, o=type)
+        o = type
+        pvars = set()
+        for i, var in enumerate(vars):
+            pv = get_polymorphic_type_var(i)
+            o = subst_type(o, var, pv)
+            pvars.add(pv)
+        return QuantifiedType(vars=pvars, o=o)
     return type
 
 
@@ -179,6 +190,19 @@ def all_vars(type: Type) -> set[TpVar]:
             return {type}
         case Func(a=a, b=b):
             return all_vars(a).union(all_vars(b))
+    raise ValueError(type)
+
+
+def all_vars_in_order(type: Type) -> list[TpVar]:
+    match type:
+        case IntTp():
+            return []
+        case TpVar():
+            return [type]
+        case Func(a=a, b=b):
+            vars = all_vars_in_order(a)
+            vars_b = all_vars_in_order(b)
+            return vars + [v for v in vars_b if v not in vars]
     raise ValueError(type)
 
 
