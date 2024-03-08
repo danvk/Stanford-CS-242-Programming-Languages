@@ -14,7 +14,7 @@ def eval(e: ski.Expr, rewrite_limit=None) -> ski.Expr:
     count = 0
     while True:
         e = rewrite_one(e)
-        s = str(e)
+        s = format_non_rec(e)
         if s in seen:  # protects against infinite rewrite loops
             # print('  done')
             break
