@@ -72,6 +72,22 @@ not_cases = [
 ]
 
 
+S = ski.S()
+K = ski.K()
+App = ski.App
+ski_0 = App(S, K)
+ski_inc = App(S, App(App(S, App(K, S)), K))
+ski_1 = App(ski_inc, ski_0)
+ski_2 = App(ski_inc, ski_1)
+ski_3 = App(ski_inc, ski_2)
+
+is_odd_cases = [
+    (App(App(App(expr_var, ski_0), xx), yy), yy),
+    (App(App(App(expr_var, ski_1), xx), yy), xx),
+    (App(App(App(expr_var, ski_2), xx), yy), yy),
+    (App(App(App(expr_var, ski_3), xx), yy), xx),
+]
+
 # Rhea's solutions (found by hand -- more concise!):
 # def or = S I (K tt);
 # def and = S S K;
@@ -89,7 +105,7 @@ for n in range(10):
             failed = False
             for template, expected in cases:
                 e = subst(template, expr_var, expr)
-                result = ski_eval.eval(e)
+                result = ski_eval.eval(e, rewrite_limit=20)
                 if result != expected:
                     failed = True
                     # print(f'    {e} -> {result} != {expected}')
