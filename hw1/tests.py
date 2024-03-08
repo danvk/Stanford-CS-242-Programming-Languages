@@ -16,4 +16,4 @@ def test_parse_and_print():
 def test_parse_and_print_compact():
     tree = ski_parser.parse('S (S I S) (K K)')
     prog = ski_prog.TreeToProg().transform(tree)
-    assert ski_eval.print_compact(prog) == '((S ((S I) S)) (K K))'
+    assert ski_eval.format_non_rec(prog) == '((S ((S I) S)) (K K))'

@@ -112,17 +112,27 @@ def abstract(e: ski.Expr, var: str) -> ski.Expr:
         return ski.App(ski.K(), e)
 
 
-def print_compact(expr: ski.Expr) -> str:
-    match expr:
-        case ski.Var(s=s):
-            return s
-        case ski.S():
-            return 'S'
-        case ski.K():
-            return 'K'
-        case ski.I():
-            return 'I'
-        case ski.App(e1=e1, e2=e2):
-            e1_str = print_compact(e1)
-            e2_str = print_compact(e2)
-            return f'({e1_str} {e2_str})'
+def format_non_rec(expr: ski.Expr) -> str:
+    out: list[str] = []
+    stack = [expr]
+    while stack:
+        e = stack.pop()
+        if isinstance(e, str):
+            out.append(e)
+        match e:
+            case ski.Var(s=s):
+                stack.append(s)
+            case ski.S():
+                stack.append('S')
+            case ski.K():
+                stack.append('K')
+            case ski.I():
+                stack.append('I')
+            case ski.App(e1=e1, e2=e2):
+                stack.append(')')
+                stack.append(e2)
+                stack.append(e1)
+                stack.append('(')
+
+    return ' '.join(out).replace('( ', '(').replace(' )', ')')
+
