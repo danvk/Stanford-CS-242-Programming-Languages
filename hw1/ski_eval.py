@@ -110,3 +110,19 @@ def abstract(e: ski.Expr, var: str) -> ski.Expr:
             return ski.I()
     else:
         return ski.App(ski.K(), e)
+
+
+def print_compact(expr: ski.Expr) -> str:
+    match expr:
+        case ski.Var(s=s):
+            return s
+        case ski.S():
+            return 'S'
+        case ski.K():
+            return 'K'
+        case ski.I():
+            return 'I'
+        case ski.App(e1=e1, e2=e2):
+            e1_str = print_compact(e1)
+            e2_str = print_compact(e2)
+            return f'({e1_str} {e2_str})'
