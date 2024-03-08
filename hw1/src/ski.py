@@ -24,6 +24,9 @@ class Var(Expr):
     __str__ = lambda self: "{}".format(self.s)
     __repr__ = __str__
 
+    def __eq__(self, other):
+        return isinstance(other, Var) and other.s == self.s
+
 class App(Expr):
     # `App(e1,e2)` denotes the application (e1 e2).
     def __init__(self, e1, e2):
