@@ -94,7 +94,7 @@ is_odd_cases = [
 # def not = S (S I (K ff)) (K tt);
 # def is_odd = S (S I (K not)) (K ff);
 
-cases = is_odd_cases
+cases = not_cases
 
 have_winner = False
 for n in range(10):
@@ -113,7 +113,8 @@ for n in range(10):
                     break
             if not failed:
                 have_winner = True
-                print(f'We have a winner! {n=}\n{expr}')
+                s = ski_eval.format_compact(expr)
+                print(f'We have a winner! {n=}\n{s}')
                 break
         if have_winner:
             break
