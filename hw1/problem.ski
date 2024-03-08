@@ -25,12 +25,17 @@ def c2 = ((S ((S (K S)) ((S (K K)) ((S (K S)) ((S ((S (K ((S (K S)) K))) I)) (K 
 ##########
 # TASK: Implement the following functions.
 
+# Minimal solutions:
+def or     = S I I;
+def and    = S S K;
+def not    = S (S I S) (K K);
+
 # BEGIN_YOUR_CODE
 # Found by running abstraction algorithm
 # def or     = ((S ((S (K S)) ((S (K K)) ((S I) (K K))))) (K I));  # or: c2 (c1 (K c1) (c2 I (K K))) I;
 # def and    = ((S ((S (K S)) ((S ((S (K S)) ((S (K K)) I))) (K I)))) (K (K (S K))));
 # def not    = S (S I S) (K K);
-def is_odd = S ((S I) (K not)) (K ff);
+def is_odd   = S (S I (K not)) (K ff);
 # END_YOUR_CODE
 
 # Rhea's solutions (found by hand -- more concise!):
@@ -38,11 +43,6 @@ def is_odd = S ((S I) (K not)) (K ff);
 # def and = S S K;
 # def not = S (S I (K ff)) (K tt);
 # def is_odd = S (S I (K not)) (K ff);
-
-# Minimal solutions:
-def or     = S I I;
-def and    = S S K;
-def not    = S (S I S) (K K);
 
 #########
 # TESTS #

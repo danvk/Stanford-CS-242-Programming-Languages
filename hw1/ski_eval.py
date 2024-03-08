@@ -122,20 +122,25 @@ def format_non_rec(expr: ski.Expr) -> str:
         e = stack.pop()
         if isinstance(e, str):
             out.append(e)
-        match e:
-            case ski.Var(s=s):
-                stack.append(s)
-            case ski.S():
-                stack.append('S')
-            case ski.K():
-                stack.append('K')
-            case ski.I():
-                stack.append('I')
-            case ski.App(e1=e1, e2=e2):
-                stack.append(')')
-                stack.append(e2)
-                stack.append(e1)
-                stack.append('(')
+        elif isinstance(e, ski.App):
+            stack.append(')')
+            stack.append(e.e2)
+            stack.append(e.e1)
+            stack.append('(')
+        else:
+            stack.append(str(e))
 
     return ' '.join(out).replace('( ', '(').replace(' )', ')')
 
+
+def format_compact(expr: ski.Expr) -> str:
+    match expr:
+        case ski.App(e1=e1, e2=e2):
+            left = format_compact(e1)
+            right = format_compact(e2)
+            if isinstance(e2, ski.App):
+                return f'{left} ({right})'
+            else:
+                return f'{left} {right}'
+        case _:
+            return str(expr)
