@@ -5,11 +5,11 @@ import src.ski as ski
 ##########
 # TASK: Implement the below function `eval`.
 
-def eval(e: ski.Expr, rewrite_limit=None, size_limit=1000) -> ski.Expr:
+def eval(e: ski.Expr, rewrite_limit=None, size_limit=None) -> ski.Expr:
     # BEGIN_YOUR_CODE
     # print(e)
     # last = e  # str(e)  # seen = {str(e)}
-    seen = {format_non_rec(e)}
+    # seen = {format_non_rec(e)}
     count = 0
     while True:
         changed, e = rewrite_one(e)
@@ -19,13 +19,14 @@ def eval(e: ski.Expr, rewrite_limit=None, size_limit=1000) -> ski.Expr:
         count += 1
         if rewrite_limit and count > rewrite_limit:
             return 'infinite loop!'
-        s = format_non_rec(e)
-        if s in seen:  # protects against infinite rewrite loops
-            # print('  done')
-            break
-        if size_limit and len(s) > size_limit:
-            return f'too long {len(s)}'
-        seen.add(s)
+        # s = format_non_rec(e)
+        # if s in seen:  # protects against infinite rewrite loops
+        #     # print('  done')
+        #     break
+        size = expr_size(e)
+        if size_limit and expr_size(e) > size_limit:
+            return f'too long {size}'
+        # seen.add(s)
         # print('  -> ', e)
 
     return e
@@ -138,3 +139,17 @@ def format_compact(expr: ski.Expr) -> str:
                 return f'{left} {right}'
         case _:
             return str(expr)
+
+
+def expr_size(expr: ski.Expr) -> int:
+    size = 0
+    stack = [expr]
+    while stack:
+        e = stack.pop()
+        if isinstance(e, ski.App):
+            stack.append(e.e2)
+            stack.append(e.e1)
+        else:
+            size += 1
+
+    return size

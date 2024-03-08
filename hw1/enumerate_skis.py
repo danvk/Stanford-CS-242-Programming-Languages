@@ -131,13 +131,13 @@ all_cases = [
     ('or', or_cases),
     ('and', and_cases),
     ('not', not_cases),
-    # ('is_odd', is_odd_cases),
+    ('is_odd', is_odd_cases),
 ]
 
 
 def find_minimal_expression(cases):
     start_secs = time.time()
-    for n in range(10):
+    for n in range(9):
         all_forms = [*trees(n)]
         for i, tree in enumerate(all_forms):
             elapsed_secs = time.time() - start_secs
@@ -147,7 +147,7 @@ def find_minimal_expression(cases):
                 failed = False
                 for template, expected in cases:
                     e = subst(template, expr_var, expr)
-                    result = ski_eval.eval(e, rewrite_limit=20)
+                    result = ski_eval.eval(e, rewrite_limit=20, size_limit=300)
                     if isinstance(result, str):
                         s = ski_eval.format_compact(expr)
                         print(f'    {result}: {s}')
