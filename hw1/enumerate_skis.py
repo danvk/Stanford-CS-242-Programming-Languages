@@ -137,7 +137,7 @@ all_cases = [
 
 def find_minimal_expression(cases):
     start_secs = time.time()
-    for n in range(9):
+    for n in range(10):
         all_forms = [*trees(n)]
         for i, tree in enumerate(all_forms):
             elapsed_secs = time.time() - start_secs
