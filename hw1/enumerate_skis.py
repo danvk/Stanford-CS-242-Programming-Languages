@@ -1,10 +1,17 @@
 #!/usr/bin/env python
+"""Enumerate all SKI expressions to find the shortest one with some behavior."""
 
 import itertools
 import time
+from pathlib import Path
 
-from src import ski
+from lark import Lark
+
+from src import ski, ski_prog
 import ski_eval
+
+ski_syntax = Path('./src/ski_prog.lark').read_text()
+ski_parser = Lark(ski_syntax, start='expr', parser='lalr')
 
 ski_var = ski.Var('x')
 
@@ -22,7 +29,9 @@ def trees(n: int):
     for i in range(1, n):
         left = i
         right = n - i
-        result += [ski.App(l, r) for l, r in itertools.product(trees(left), trees(right))]
+        result += [
+            ski.App(l, r) for l, r in itertools.product(trees(left), trees(right))
+        ]
     return result
 
 
@@ -30,18 +39,38 @@ def all_combinators(expr: ski.Expr):
     """Replace each var with every possible combinator in expr, yielding new expressions."""
     match expr:
         case ski.Var():
-            yield ski.S()
-            yield ski.K()
             yield ski.I()
+            yield ski.K()
+            yield ski.S()
         case ski.App(e1=left, e2=right):
-            yield from (ski.App(l, r) for l, r in itertools.product(all_combinators(left), all_combinators(right)))
+            yield from (
+                ski.App(l, r)
+                for l, r in itertools.product(
+                    all_combinators(left),
+                    all_combinators(right)
+                )
+            )
         case _:
             yield expr
 
-tt = ski.K()
-ff = ski.App(ski.S(), ski.K())
+S = ski.S()
+K = ski.K()
+App = ski.App
+
+def parse_ski(s: str) -> ski.Expr:
+    tree = ski_parser.parse(s)
+    return ski_prog.TreeToProg().transform(tree)
+
+tt = parse_ski('K')
+ff = parse_ski('S K')
 xx = ski.Var('x')
 yy = ski.Var('y')
+ski_0 = parse_ski('S K')
+ski_inc = parse_ski('S (S (K S) K)')
+ski_1 = App(ski_inc, ski_0)
+ski_2 = App(ski_inc, ski_1)
+ski_3 = App(ski_inc, ski_2)
+
 expr_var = ski.Var('expr')
 
 def subst(expr: ski.Expr, var: ski.Var, val: ski.Expr) -> ski.Expr:
@@ -54,76 +83,85 @@ def subst(expr: ski.Expr, var: ski.Var, val: ski.Expr) -> ski.Expr:
             return expr
 
 
+ski_vars = {
+    'tt': tt,
+    'ff': ff,
+    'inc': ski_inc,
+    '_0': ski_0,
+    '_1': ski_1,
+    '_2': ski_2,
+    '_3': ski_3,
+}
+
+def ski_expr(s: str) -> ski.Expr:
+    """Parse a SKI expression and fill in known symbols."""
+    e = parse_ski(s)
+    for name, val in ski_vars.items():
+        e = subst(e, ski.Var(name), val)
+    return e
+
+
 or_cases = [
-    (ski.App(ski.App(ski.App(ski.App(expr_var, tt), tt), xx), yy), xx),
-    (ski.App(ski.App(ski.App(ski.App(expr_var, tt), ff), xx), yy), xx),
-    (ski.App(ski.App(ski.App(ski.App(expr_var, ff), tt), xx), yy), xx),
-    (ski.App(ski.App(ski.App(ski.App(expr_var, ff), ff), xx), yy), yy),
+    (ski_expr('(expr tt tt) x y'), xx),
+    (ski_expr('(expr tt ff) x y'), xx),
+    (ski_expr('(expr ff tt) x y'), xx),
+    (ski_expr('(expr ff ff) x y'), yy),
 ]
 
 and_cases = [
-    (ski.App(ski.App(ski.App(ski.App(expr_var, tt), tt), xx), yy), xx),
-    (ski.App(ski.App(ski.App(ski.App(expr_var, tt), ff), xx), yy), yy),
-    (ski.App(ski.App(ski.App(ski.App(expr_var, ff), tt), xx), yy), yy),
-    (ski.App(ski.App(ski.App(ski.App(expr_var, ff), ff), xx), yy), yy),
+    (ski_expr('(expr tt tt) x y'), xx),
+    (ski_expr('(expr tt ff) x y'), yy),
+    (ski_expr('(expr ff tt) x y'), yy),
+    (ski_expr('(expr ff ff) x y'), yy),
 ]
 
 not_cases = [
-    (ski.App(ski.App(ski.App(expr_var, tt), xx), yy), yy),
-    (ski.App(ski.App(ski.App(expr_var, ff), xx), yy), xx),
+    (ski_expr('(expr tt) x y'), yy),
+    (ski_expr('(expr ff) x y'), xx),
 ]
-
-
-S = ski.S()
-K = ski.K()
-App = ski.App
-ski_0 = App(S, K)
-ski_inc = App(S, App(App(S, App(K, S)), K))
-ski_1 = App(ski_inc, ski_0)
-ski_2 = App(ski_inc, ski_1)
-ski_3 = App(ski_inc, ski_2)
 
 is_odd_cases = [
-    (App(App(App(expr_var, ski_0), xx), yy), yy),
-    (App(App(App(expr_var, ski_1), xx), yy), xx),
-    (App(App(App(expr_var, ski_2), xx), yy), yy),
-    (App(App(App(expr_var, ski_3), xx), yy), xx),
+    (ski_expr('(expr _0) x y'), yy),
+    (ski_expr('(expr _1) x y'), xx),
+    (ski_expr('(expr _2) x y'), yy),
+    (ski_expr('(expr _3) x y'), xx),
 ]
 
-# Rhea's solutions (found by hand -- more concise!):
-# def or = S I (K tt);
-# def and = S S K;
-# def not = S (S I (K ff)) (K tt);
-# def is_odd = S (S I (K not)) (K ff);
+all_cases = [
+    ('or', or_cases),
+    ('and', and_cases),
+    ('not', not_cases),
+    # ('is_odd', is_odd_cases),
+]
 
-cases = is_odd_cases
 
-have_winner = False
-start_secs = time.time()
-for n in range(10):
-    all_forms = [*trees(n)]
-    for i, tree in enumerate(all_forms):
-        elapsed_secs = time.time() - start_secs
-        print(f'{n=} {i} / {len(all_forms)}: {tree} {elapsed_secs:.1f} secs')
-        for expr in all_combinators(tree):
-            # print(f'  {expr}')
-            failed = False
-            for template, expected in cases:
-                e = subst(template, expr_var, expr)
-                result = ski_eval.eval(e, rewrite_limit=20)
-                if isinstance(result, str):
+def find_minimal_expression(cases):
+    start_secs = time.time()
+    for n in range(10):
+        all_forms = [*trees(n)]
+        for i, tree in enumerate(all_forms):
+            elapsed_secs = time.time() - start_secs
+            print(f'{n=} {i} / {len(all_forms)}: {tree} {elapsed_secs:.1f} secs')
+            for expr in all_combinators(tree):
+                # print(f'  {expr}')
+                failed = False
+                for template, expected in cases:
+                    e = subst(template, expr_var, expr)
+                    result = ski_eval.eval(e, rewrite_limit=20)
+                    if isinstance(result, str):
+                        s = ski_eval.format_compact(expr)
+                        print(f'    {result}: {s}')
+                    if result != expected:
+                        failed = True
+                        # print(f'    {e} -> {result} != {expected}')
+                        break
+                if not failed:
                     s = ski_eval.format_compact(expr)
-                    print(f'    {result}: {s}')
-                if result != expected:
-                    failed = True
-                    # print(f'    {e} -> {result} != {expected}')
-                    break
-            if not failed:
-                have_winner = True
-                s = ski_eval.format_compact(expr)
-                print(f'We have a winner! {n=}\n{s}')
-                break
-        if have_winner:
-            break
-    if have_winner:
-        break
+                    print(f'We have a winner! {n=} {elapsed_secs:.1f}\n{s}')
+                    return True
+    return False
+
+
+for fn_name, cases in all_cases:
+    print(f'\n\n--- {fn_name} ----')
+    find_minimal_expression(cases)

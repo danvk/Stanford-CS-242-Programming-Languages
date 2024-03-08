@@ -9,8 +9,9 @@ def eval(e: ski.Expr, rewrite_limit=None, size_limit=1000) -> ski.Expr:
     # BEGIN_YOUR_CODE
     # print(e)
     # last = e  # str(e)  # seen = {str(e)}
-    seen = {str(e)}
+    seen = {format_non_rec(e)}
     count = 0
+    reset_app_pool()
     while True:
         changed, e = rewrite_one(e)
         if not changed:
@@ -58,10 +59,36 @@ def rewrite_app(app: ski.App) -> tuple[bool, ski.Expr]:
                 # app.e1 = ski.App(se1, se3)
                 # app.e2 = ski.App(se2, se3)
                 # return True, app
-                return True, ski.App(ski.App(se1, se3), ski.App(se2, se3))
+                return True, get_app(get_app(se1, se3), get_app(se2, se3))
     if not changed:
         return False, app
-    return changed, ski.App(e1, e2)
+    return changed, get_app(e1, e2)
+
+
+num_apps = 0
+app_pool = []
+
+
+def get_app(e1, e2):
+    global num_apps
+    global app_pool
+
+    if num_apps < len(app_pool):
+        app = app_pool[num_apps]
+        app.e1 = e1
+        app.e2 = e2
+        num_apps += 1
+        return app
+    else:
+        app = ski.App(e1=e1, e2=e2)
+        app_pool.append(app)
+        num_apps += 1
+        return app
+
+
+def reset_app_pool():
+    global num_apps
+    num_apps = 0
 
 
 # K e1 e2   = ((K e1) e2)     = e2
