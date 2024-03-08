@@ -98,10 +98,11 @@ cases = is_odd_cases
 
 have_winner = False
 for n in range(10):
-    for tree in trees(n):
-        print(f'{tree}')
+    all_forms = [*trees(n)]
+    for i, tree in enumerate(all_forms):
+        print(f'{n=} {i} / {len(all_forms)}: {tree}')
         for expr in all_combinators(tree):
-            print(f'  {expr}')
+            # print(f'  {expr}')
             failed = False
             for template, expected in cases:
                 e = subst(template, expr_var, expr)
