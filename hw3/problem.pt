@@ -1,2 +1,2 @@
-def I = \x. x;
-def _ = I I;
+def id = \x. x;
+def _ = id id;

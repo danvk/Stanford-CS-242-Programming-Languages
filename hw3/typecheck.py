@@ -70,7 +70,7 @@ def get_prog_env(prog: Prog):
         saturate(S)
         check_ill_typed(S)
         t = canonicalize(S, t)
-        o = generalize(t, {})
+        o = generalize(A, t)
         A[defn.s] = o
         assert len(canonicalizing) == 0, f'{canonicalizing=}'
     return A

@@ -83,6 +83,9 @@ class QuantifiedType(PolymorphicType):
     def __hash__(self) -> int:
         return hash(('QuantifiedType', self.vars, self.o))
 
+    def __repr__(self):
+        return self.o.__repr__()
+
 ### CONSTANTS ###
 
 # Constants have a fixed type supplied by the following table. Var('x') is a constant
