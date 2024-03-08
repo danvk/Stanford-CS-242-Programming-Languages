@@ -1,5 +1,5 @@
 
-from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, Prog, TpVar, Type, TypecheckingError, Var
+from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, PolymorphicType, Prog, QuantifiedType, TpVar, Type, TypecheckingError, Var
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
@@ -137,27 +137,22 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
         canonicalizing.remove(type)
 
 
-n_f = -1
-def get_fresh_final_type():
-    global n_f
-    n_f += 1
-    return TpVar(f't{n_f}')
+def generalize(type: Type) -> PolymorphicType:
+    pass
 
 
-def is_final(t: TpVar):
-    return t.s.startswith('t')
-
-
-def finalize_type_vars(t: Type, map: dict[TpVar, TpVar]) -> Type:
-    match t:
+def free_vars(env_or_type: dict[TpVar, Type] | Type) -> set[TpVar]:
+    if isinstance(env_or_type, dict):
+        out = set()
+        for x, t in env_or_type.items():
+            out.update(free_vars(t))
+        return out
+    match env_or_type:
         case IntTp():
-            return t
+            return set()
         case Func(a=a, b=b):
-            return Func(finalize_type_vars(a, map), finalize_type_vars(b, map))
-        case TpVar() if t in map:
-            return map[t]
-        case TpVar():
-            f = get_fresh_final_type()
-            map[t] = f
-            map[f] = f
-            return f
+            return free_vars(a).union(free_vars(b))
+        case TpVar() as t:
+            return set([t])
+        case QuantifiedType(vars=vars, o=o):
+            return free_vars(o).difference(vars)

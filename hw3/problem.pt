@@ -1,0 +1,2 @@
+def I = \x. x;
+def _ = I I;

@@ -33,12 +33,16 @@ class IntConst(Expr):
 
 ### Types ###
 
+class PolymorphicType:
+    def __eq__(self, other) -> bool: raise NotImplementedError()
+    def __hash__(self) -> int: raise NotImplementedError()
+
 # Note, Type is an abstract base class; all instances are expected to be one of the cases below.
 # Type objects can be compared for structural equality, and thus stored in sets/maps/etc.
 # For example, Func(IntType(), IntType()) == Func(IntType(), IntType()) is true, even though the
 # actual objects at runtime are different. Note this is *structural equality*, so
 # IntType() != TypeVar('x') even if we have an equation somewhere saying TypeVar('x') is IntType().
-class Type:
+class Type(PolymorphicType):
     def __eq__(self, other) -> bool: raise NotImplementedError()
     def __hash__(self) -> int: raise NotImplementedError()
 
@@ -65,6 +69,14 @@ class TpVar(Type):
         return self.s == other.s
     def __hash__(self): return hash(('TpVar', self.s))
     def __repr__(self): return self.s
+
+class QuantifiedType(PolymorphicType):
+    def __init__(self, vars: list[TpVar], o: PolymorphicType):
+        self.vars = vars
+        self.o = o
+
+    def __eq__(self, other) -> bool: raise NotImplementedError()
+    def __hash__(self) -> int: raise NotImplementedError()
 
 ### CONSTANTS ###
 
