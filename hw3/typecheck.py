@@ -20,7 +20,7 @@ def get_fresh_type():
 
 
 def get_type_and_constraints(
-    A: dict[str, Type],
+    A: dict[str, PolymorphicType],
     e: Expr,
     S: set[tuple[Type, Type]],
 ) -> Type:
@@ -33,7 +33,15 @@ def get_type_and_constraints(
         case Var(s=s) if s in CONSTS:
             return CONSTS[s]
         case Var(s=s) if s in A:
-            return A[s]
+            t = A[s]
+            match t:
+                case QuantifiedType(vars=vars, o=o):
+                    # Create a fresh type variable for each of vars
+                    for var in vars:
+                        o = subst_type(o, var, get_fresh_type())
+                    return o
+                case _:
+                    return t
         case Var(s=s):
             # free variable
             raise TypecheckingError(f'undefined variable {s}')
@@ -62,8 +70,8 @@ def get_prog_env(prog: Prog):
         saturate(S)
         check_ill_typed(S)
         t = canonicalize(S, t)
-        t = finalize_type_vars(t, {})
-        A[defn.s] = t
+        o = generalize(t, {})
+        A[defn.s] = o
         assert len(canonicalizing) == 0, f'{canonicalizing=}'
     return A
 
@@ -140,6 +148,7 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
 def generalize(env: dict[TpVar, PolymorphicType], type: Type) -> PolymorphicType:
     vars = all_vars(type).difference(free_vars(env))
     if vars:
+        # TODO: relabel quantified variables here
         return QuantifiedType(vars=vars, o=type)
     return type
 
@@ -170,4 +179,16 @@ def all_vars(type: Type) -> set[TpVar]:
             return {type}
         case Func(a=a, b=b):
             return all_vars(a).union(all_vars(b))
+    raise ValueError(type)
+
+
+def subst_type(type: Type, old: TpVar, new: TpVar) -> Type:
+    match type:
+        case TpVar():
+            return new if type == old else type
+        case IntTp():
+            return type
+        case Func(a=a, b=b):
+            return Func(subst_type(a, old, new), subst_type(b, old, new))
+
     raise ValueError(type)

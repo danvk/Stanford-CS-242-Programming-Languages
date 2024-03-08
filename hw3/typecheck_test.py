@@ -1,5 +1,5 @@
 from src.lam import Func, IntTp, QuantifiedType, TpVar
-from typecheck import free_vars, generalize
+from typecheck import free_vars, generalize, subst_type
 
 
 def test_free_vars():
@@ -23,3 +23,13 @@ def test_generalize():
     assert generalize({}, Func(x, y)) == QuantifiedType(vars={x, y}, o=Func(x, y))
     assert generalize({z: y}, Func(x, y)) == QuantifiedType(vars={x}, o=Func(x, y))
     assert generalize({z: Func(x, y)}, Func(x, y)) == Func(x, y)
+
+
+def test_subst():
+    x = TpVar('x')
+    y = TpVar('y')
+    z = TpVar('z')
+    assert subst_type(x, x, y) == y
+    assert subst_type(Func(x, z), x, y) == Func(y, z)
+    assert subst_type(Func(x, z), z, y) == Func(x, y)
+    assert subst_type(Func(IntTp(), Func(x, y)), y, z) == Func(IntTp(), Func(x, z))
