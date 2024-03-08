@@ -24,6 +24,7 @@ def eval(e: ski.Expr, rewrite_limit=None, size_limit=None) -> ski.Expr:
         #     # print('  done')
         #     break
         size = expr_size(e)
+        # print(f'{size=}')
         if size_limit and expr_size(e) > size_limit:
             return f'too long {size}'
         # seen.add(s)

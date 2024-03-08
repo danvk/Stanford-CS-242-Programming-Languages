@@ -20,3 +20,9 @@ This will enumerate all SKI expressions, trying to find the shortest ones that h
 - and: `S S K`
 - not: `S (S I S) (K K)`
 - is_odd: ??? requires at least 10 combinators.
+
+The shortest expression we know of for `is_odd` is:
+
+    S (S I (K (S (S I (K (S K))) (K K)))) (K (S K))
+
+which has 15 combinators. This reaches a max size of 113 symbols while evaluating `is_odd _3`.
