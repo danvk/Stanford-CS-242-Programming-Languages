@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import itertools
+import time
+
 from src import ski
 import ski_eval
 
@@ -94,19 +96,24 @@ is_odd_cases = [
 # def not = S (S I (K ff)) (K tt);
 # def is_odd = S (S I (K not)) (K ff);
 
-cases = not_cases
+cases = is_odd_cases
 
 have_winner = False
+start_secs = time.time()
 for n in range(10):
     all_forms = [*trees(n)]
     for i, tree in enumerate(all_forms):
-        print(f'{n=} {i} / {len(all_forms)}: {tree}')
+        elapsed_secs = time.time() - start_secs
+        print(f'{n=} {i} / {len(all_forms)}: {tree} {elapsed_secs:.1f} secs')
         for expr in all_combinators(tree):
             # print(f'  {expr}')
             failed = False
             for template, expected in cases:
                 e = subst(template, expr_var, expr)
                 result = ski_eval.eval(e, rewrite_limit=20)
+                if isinstance(result, str):
+                    s = ski_eval.format_compact(expr)
+                    print(f'    {result}: {s}')
                 if result != expected:
                     failed = True
                     # print(f'    {e} -> {result} != {expected}')

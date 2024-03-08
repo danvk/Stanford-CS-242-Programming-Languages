@@ -18,15 +18,13 @@ def eval(e: ski.Expr, rewrite_limit=None, size_limit=1000) -> ski.Expr:
             break
         count += 1
         if rewrite_limit and count > rewrite_limit:
-            print('infinite loop!')
-            break
+            return 'infinite loop!'
         s = format_non_rec(e)
         if s in seen:  # protects against infinite rewrite loops
             # print('  done')
             break
         if size_limit and len(s) > size_limit:
-            print('too long')
-            break
+            return f'too long {len(s)}'
         seen.add(s)
         # print('  -> ', e)
 
@@ -61,10 +59,9 @@ def rewrite_app(app: ski.App) -> tuple[bool, ski.Expr]:
                 # app.e2 = ski.App(se2, se3)
                 # return True, app
                 return True, ski.App(ski.App(se1, se3), ski.App(se2, se3))
-
-    app.e1 = e1
-    app.e2 = e2
-    return changed, app
+    if not changed:
+        return False, app
+    return changed, ski.App(e1, e2)
 
 
 # K e1 e2   = ((K e1) e2)     = e2
