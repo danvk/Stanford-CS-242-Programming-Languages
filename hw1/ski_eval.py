@@ -7,7 +7,7 @@ import src.ski as ski
 
 should_abstract = False
 
-def eval(e: ski.Expr, rewrite_limit=None) -> ski.Expr:
+def eval(e: ski.Expr, rewrite_limit=None, size_limit=1000) -> ski.Expr:
     # BEGIN_YOUR_CODE
     # print(e)
     seen = {str(e)}
@@ -22,6 +22,9 @@ def eval(e: ski.Expr, rewrite_limit=None) -> ski.Expr:
         count += 1
         if rewrite_limit and count > rewrite_limit:
             print('infinite loop!')
+            break
+        if size_limit and len(s) > size_limit:
+            print('too long')
             break
         # print('  -> ', e)
 

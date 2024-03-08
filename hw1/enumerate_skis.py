@@ -94,7 +94,7 @@ is_odd_cases = [
 # def not = S (S I (K ff)) (K tt);
 # def is_odd = S (S I (K not)) (K ff);
 
-cases = not_cases
+cases = is_odd_cases
 
 have_winner = False
 for n in range(10):
