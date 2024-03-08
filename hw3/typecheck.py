@@ -137,11 +137,14 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
         canonicalizing.remove(type)
 
 
-def generalize(type: Type) -> PolymorphicType:
-    pass
+def generalize(env: dict[TpVar, PolymorphicType], type: Type) -> PolymorphicType:
+    vars = all_vars(type).difference(free_vars(env))
+    if vars:
+        return QuantifiedType(vars=vars, o=type)
+    return type
 
 
-def free_vars(env_or_type: dict[TpVar, Type] | Type) -> set[TpVar]:
+def free_vars(env_or_type: dict[TpVar, PolymorphicType] | PolymorphicType) -> set[TpVar]:
     if isinstance(env_or_type, dict):
         out = set()
         for x, t in env_or_type.items():
@@ -156,3 +159,15 @@ def free_vars(env_or_type: dict[TpVar, Type] | Type) -> set[TpVar]:
             return set([t])
         case QuantifiedType(vars=vars, o=o):
             return free_vars(o).difference(vars)
+
+
+def all_vars(type: Type) -> set[TpVar]:
+    """Find all type variables mentioned in a Type."""
+    match type:
+        case IntTp():
+            return set()
+        case TpVar():
+            return {type}
+        case Func(a=a, b=b):
+            return all_vars(a).union(all_vars(b))
+    raise ValueError(type)

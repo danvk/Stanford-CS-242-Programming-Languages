@@ -75,8 +75,13 @@ class QuantifiedType(PolymorphicType):
         self.vars = vars
         self.o = o
 
-    def __eq__(self, other) -> bool: raise NotImplementedError()
-    def __hash__(self) -> int: raise NotImplementedError()
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, QuantifiedType):
+            return False
+        return self.vars == other.vars and self.o == other.o
+
+    def __hash__(self) -> int:
+        return hash(('QuantifiedType', self.vars, self.o))
 
 ### CONSTANTS ###
 
