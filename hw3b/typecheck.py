@@ -1,5 +1,5 @@
 
-from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, PolymorphicType, Prog, QuantifiedType, TpVar, Type, TypecheckingError, Var
+from src.lam import CONSTS, App, BoolConst, BoolTp, Expr, Func, IntConst, IntTp, Lam, PolymorphicType, Prog, QuantifiedType, TpVar, Type, TypecheckingError, Var
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
@@ -25,10 +25,13 @@ def get_type_and_constraints(
     S is an output variable of constraints.
     """
     match e:
-        case Var(s=s) if s in CONSTS:
-            return CONSTS[s]
-        case Var(s=s) if s in A:
-            t = A[s]
+        case Var(s=s):
+            # First try CONSTS, then the environment.
+            t = CONSTS.get(s, A.get(s))
+            if not t:
+                # free variable
+                raise TypecheckingError(f'undefined variable {s}')
+
             match t:
                 case QuantifiedType(vars=vars, o=o):
                     # Create a fresh type variable for each of vars
@@ -37,11 +40,10 @@ def get_type_and_constraints(
                     return o
                 case _:
                     return t
-        case Var(s=s):
-            # free variable
-            raise TypecheckingError(f'undefined variable {s}')
         case IntConst():
             return IntTp()
+        case BoolConst():
+            return BoolTp()
         case Lam(s=s, e=e):
             alpha = get_fresh_type()
             t = get_type_and_constraints({**A, s: alpha}, e, S)
@@ -103,7 +105,10 @@ def saturate(S: set[tuple[TpVar, Type]]):
 def check_ill_typed(S: set[tuple[TpVar, Type]]):
     """Look for (t -> t' = int) in S and throw if it's found."""
     for left, right in S:
-        if right == IntTp() and isinstance(left, Func):
+        if (
+            ((right == IntTp() or right == BoolTp()) and isinstance(left, Func)) or
+            (left == IntTp() and right == BoolTp())
+        ):
             raise TypecheckingError(f'ill-typed: Found {left} = {right}')
 
 
@@ -123,6 +128,8 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
 
         match type:
             case IntTp():
+                return type
+            case BoolTp():
                 return type
             case Func(a=a, b=b):
                 return Func(canonicalize(S, a), canonicalize(S, b))
@@ -174,6 +181,8 @@ def free_vars(env_or_type: dict[TpVar, PolymorphicType] | PolymorphicType) -> se
     match env_or_type:
         case IntTp():
             return set()
+        case BoolTp():
+            return set()
         case Func(a=a, b=b):
             return free_vars(a).union(free_vars(b))
         case TpVar() as t:
@@ -187,6 +196,8 @@ def all_vars(type: Type) -> set[TpVar]:
     match type:
         case IntTp():
             return set()
+        case BoolTp():
+            return set()
         case TpVar():
             return {type}
         case Func(a=a, b=b):
@@ -197,6 +208,8 @@ def all_vars(type: Type) -> set[TpVar]:
 def all_vars_in_order(type: Type) -> list[TpVar]:
     match type:
         case IntTp():
+            return []
+        case BoolTp():
             return []
         case TpVar():
             return [type]
@@ -212,6 +225,8 @@ def subst_type(type: Type, old: TpVar, new: TpVar) -> Type:
         case TpVar():
             return new if type == old else type
         case IntTp():
+            return type
+        case BoolTp():
             return type
         case Func(a=a, b=b):
             return Func(subst_type(a, old, new), subst_type(b, old, new))

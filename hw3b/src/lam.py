@@ -31,6 +31,10 @@ class IntConst(Expr):
     def __init__(self, i: int): self.i = i
     def __repr__(self): return "{}".format(self.i)
 
+class BoolConst(Expr):
+    def __init__(self, b: bool): self.b = b
+    def __repr__(self): return "true" if self.b else "false"
+
 ### Types ###
 
 class PolymorphicType:
@@ -46,11 +50,21 @@ class Type(PolymorphicType):
     def __eq__(self, other) -> bool: raise NotImplementedError()
     def __hash__(self) -> int: raise NotImplementedError()
 
+class PrimitiveTp(Type):
+    def __eq__(self, other) -> bool: raise NotImplementedError()
+    def __hash__(self) -> int: raise NotImplementedError()
+
 class IntTp(Type):
     def __eq__(self, other) -> bool:
         return isinstance(other, IntTp)
     def __hash__(self): return hash('Int')
     def __repr__(self): return "int"
+
+class BoolTp(Type):
+    def __eq__(self, other) -> bool:
+        return isinstance(other, BoolTp)
+    def __hash__(self): return hash('Bool')
+    def __repr__(self): return "bool"
 
 class Func(Type):
     def __init__(self, a: Type, b: Type): self.a, self.b = a, b
@@ -93,12 +107,15 @@ class QuantifiedType(PolymorphicType):
 # bound variables are never equal to constants.
 
 _I = IntTp()
+_B = BoolTp()
+a = TpVar("'a")
 CONSTS = {
     '+': Func(_I, Func(_I, _I)),
     '-': Func(_I, Func(_I, _I)),
     '/': Func(_I, Func(_I, _I)),
     '*': Func(_I, Func(_I, _I)),
-    'ifz': Func(_I, Func(_I, Func(_I, _I)))
+    'ifz': Func(_I, Func(_I, Func(_I, _I))),
+    'if': QuantifiedType([a], Func(_B, Func(a, Func(a, a)))),
 }
 
 ### TYPECHECKING ###

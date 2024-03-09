@@ -34,7 +34,7 @@ def fresh_wrt(vs: Set[str], hint: str = 'x') -> str:
 
 # Implementation of capture avoiding substitution substituting e for s in a
 def subst(e: Expr, s: str, a: Expr) -> Expr:
-    if isinstance(a, IntConst):
+    if isinstance(a, (IntConst, BoolConst)):
         return a
     if isinstance(a, Var):
         return e if a.s == s else a
@@ -79,8 +79,15 @@ def _eval_app(app: Tuple[Expr, ...]) -> Tuple[Expr, ...]:
                 return _eval_app((b if a.i == 0 else c, *rest))
             else:
                 raise TypecheckingError("Expected ifz argument to be an int")
+        elif h.s == 'if' and len(app) > 3:
+            (op, a, b, c, *rest) = app
+            a = _eval(a)
+            if isinstance(a, BoolConst):
+                return _eval_app((b if a.b else c, *rest))
+            else:
+                raise TypecheckingError("Expected if argument to be a bool")
         return (h, *(_eval(a) for a in app[1:]))
-    elif isinstance(h, IntConst):
+    elif isinstance(h, (IntConst, BoolConst)):
         return (h, *_eval_app(app[1:]))
     elif isinstance(h, Lam):
         return app
