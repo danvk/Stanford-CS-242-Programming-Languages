@@ -4,10 +4,6 @@ from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
     A = get_prog_env(prog)
-
-    # for s, t in A.items():
-    #     print(f'{s}: {t}')
-
     types = [*A.values()]
     return types
 
