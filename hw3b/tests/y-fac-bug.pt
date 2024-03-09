@@ -1,16 +1,2 @@
 # The type should be ('a -> 'a) -> 'a -> 'a
 def direct_2 = \f.\x. f (f x);  # ('a -> 'a) -> 'b -> 'a
-
-# utop agrees
-
-#     f     x    result
-# t: a0 -> a1 -> a2
-# A: {}
-# S: {
-#    (a0, a1 -> a3),
-#    (a0, a3 -> a2)
-# }
-
-# f x     -> a0 = a1 -> a3
-# f (f x) -> a0 = a3 -> a2
-# a1 = a2 = a3 -> (a1 -> a1) -> a1 -> a1
