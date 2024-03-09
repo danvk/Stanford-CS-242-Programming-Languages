@@ -32,7 +32,7 @@ def num_zero = \l. l (\el. \acc. (is_zero el) (inc acc) acc) _0;
 
 # helpers
 def add      = \m.\n. m inc n;
-def not      = \b. b ff tt;
+def not      = \b. if b false true;
 def plus1    = + 1;
 def value    = \n. n plus1 0;
 
@@ -44,9 +44,13 @@ def fib      = \n. snd (n fib1 (pair 1 1));
 def dec1     = \acc. pair (snd acc) (plus1 (snd acc));
 def dec      = \n. fst (n dec1 (pair 0 0));
 
-# acc = (is_even?, result)
-# def half1    = \acc. pair (not (fst acc)) ((fst acc) (plus1 (snd acc)) (snd acc));
-# def half     = \n. snd (n half1 (pair ff 0));
+# can't have an accumulator with mixed types!
+# acc = (is_even?, result) : (bool, int)
+# def half1    = \acc. pair (not (fst acc)) (if (fst acc) (plus1 (snd acc)) (snd acc));
+
+# acc = (is_even? 1 or 0, result) : (int, int)
+def half1    = \acc. pair (ifz (fst acc) 1 0) (ifz (fst acc) (plus1 (snd acc)) (snd acc));
+def half     = \n. snd (n half1 (pair 0 0));
 
 # END_YOUR_CODE
 
@@ -88,9 +92,9 @@ def r1 = dec _2;
 def r2 = dec _3;
 def r3 = dec _4;
 
-# def section_half = 0;
-# def r0 = half _0;
-# def r0 = half _1;
-# def r1 = half _2;
-# def r1 = half _3;
-# def r2 = half _4;
+def section_half = 0;
+def r0 = half _0;
+def r0 = half _1;
+def r1 = half _2;
+def r1 = half _3;
+def r2 = half _4;

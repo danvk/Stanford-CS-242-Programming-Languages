@@ -1,0 +1,4 @@
+# Ill-typed, int != bool
+
+def id = \x. x;
+def _ = \b. if b 0 id;
