@@ -63,9 +63,6 @@ def get_prog_env(prog: Prog):
     for defn in prog.defns:
         S = set()
         t = get_type_and_constraints(A, defn.e, S)
-        print(t)
-        print(A)
-        print(S)
         saturate(S)
         try:
             check_ill_typed(S)
