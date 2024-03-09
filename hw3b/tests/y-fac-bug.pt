@@ -1,0 +1,33 @@
+# Bool
+# def tt   = \x.\y. x;  # 'a -> 'b -> 'a
+# def ff   = \x.\y. y;  # 'a -> 'b -> 'b
+
+# Numeral
+def inc  = \n.\f.\x. f (n f x);
+
+def _0       = \f.\x. x;    # 'a         -> 'b -> 'b
+
+# The type of direct_1 looks right, the type of inc_1 looks wrong.
+def direct_1 = \f.\x. f x;  # ('a -> 'b) -> 'a -> 'b
+def inc_1    = inc _0;      # ('a -> 'b) -> 'c -> 'b
+
+# The types of both should be ('a -> 'a) -> 'a -> 'a
+def direct_2 = \f.\x. f (f x);  # ('a -> 'a) -> 'b -> 'a
+def inc_2    = inc inc_1;       # ('a -> 'b) -> 'c -> 'b
+
+# Pair
+# def pair = \x.\y.\f. f x y;
+# def fst  = \p. p tt;
+# def snd  = \p. p ff;
+
+# def plus1 = \n. + 1 n;  # int -> int
+
+# acc = (n, n!)
+# def f_help = \acc. pair (plus1 (fst acc)) (+ 1 (snd acc));
+# def f      = \n. snd (n f_help (pair 0 1));
+
+# _: int
+# def _ = snd (f_help (pair 0 1));
+
+# r1: 'a
+# def r1 = f _0;

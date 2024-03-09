@@ -1,21 +1,22 @@
 # Bool
-def tt   = \x.\y. x;
-def ff   = \x.\y. y;
+def tt   = \x.\y. x;  # 'a -> 'b -> 'a
+def ff   = \x.\y. y;  # 'a -> 'b -> 'b
 
 # Numeral
 def inc  = \n.\f.\x. f (n f x);
-def _0   = \f.\x. x;
-def _1   = inc _0;
-def _2   = inc _1;
-def _3   = inc _2;
-def _4   = inc _3;
+
+def _0   = \f.\x. x;  # 'a         -> 'b -> 'b
+def _1   = inc _0;    # ('a -> 'b) -> 'c -> 'b
+def _2   = inc _1;    # ('a -> 'b) -> 'c -> 'b
+def _3   = inc _2;    # ('a -> 'b) -> 'c -> 'b
+def _4   = inc _3;    # ('a -> 'b) -> 'c -> 'b
 
 # Pair
 def pair = \x.\y.\f. f x y;
 def fst  = \p. p tt;
 def snd  = \p. p ff;
 
-def plus1 = \n. + 1 n;
+def plus1 = \n. + 1 n;  # int -> int
 
 # acc = (n, n!)
 def fac_help = \acc. pair (plus1 (fst acc)) (* (plus1 (fst acc)) (snd acc));
@@ -27,3 +28,17 @@ def r1 = fac _1;
 def r2 = fac _2;
 def r6 = fac _3;
 def r24 = fac _4;
+
+def id = \x. x;
+
+# value: ((int -> int) -> int -> 'a) -> 'a
+def value    = \n. n (+ 1) 0;
+
+# it is possible for value to produce something other than an int:
+def _ = value (\f. \z. id);
+
+# _: int
+def _ = snd (fac_help (pair 0 1));
+
+# r1: 'a
+def r1 = fac _0;
