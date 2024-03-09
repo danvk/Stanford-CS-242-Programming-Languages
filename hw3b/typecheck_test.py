@@ -16,12 +16,14 @@ def test_free_vars():
 
 
 def test_generalize():
+    a = TpVar("'a")
+    b = TpVar("'b")
     x = TpVar('x')
-    assert generalize({}, Func(x, x)) == QuantifiedType(vars={x}, o=Func(x, x))
+    assert generalize({}, Func(x, x)) == QuantifiedType(vars={a}, o=Func(a, a))
     y = TpVar('y')
     z = TpVar('z')
-    assert generalize({}, Func(x, y)) == QuantifiedType(vars={x, y}, o=Func(x, y))
-    assert generalize({z: y}, Func(x, y)) == QuantifiedType(vars={x}, o=Func(x, y))
+    assert generalize({}, Func(x, y)) == QuantifiedType(vars={a, b}, o=Func(a, b))
+    assert generalize({z: y}, Func(x, y)) == QuantifiedType(vars={a}, o=Func(a, y))
     assert generalize({z: Func(x, y)}, Func(x, y)) == Func(x, y)
 
 
@@ -51,10 +53,8 @@ def test_saturate_and_canonicalize():
     print(t)
     print(S)
     saturate(S)
-    print(S)
     t = canonicalize(S, t)
-    print(t)
-    assert t == Func(Func(a, a), Func(a, a))
+    assert t == Func(Func(b, b), Func(b, b))
 
 
 def test_canonicalize():
@@ -77,9 +77,7 @@ def test_canonicalize():
         (a2, a1)
     }
     t = Func(a0, Func(a1, a2))
-    print(t)
     t = canonicalize(S, t)
-    print(t)
     assert t == Func(Func(a1, a1), Func(a1, a1))
 
 # A: {}
