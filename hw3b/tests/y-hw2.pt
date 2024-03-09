@@ -33,11 +33,20 @@ def num_zero = \l. l (\el. \acc. (is_zero el) (inc acc) acc) _0;
 # helpers
 def add      = \m.\n. m inc n;
 def not      = \b. b ff tt;
-def value    = \n. n (+ 1) 0;
+def plus1    = + 1;
+def value    = \n. n plus1 0;
 
 # acc = (fib(n-2), fib(n-1))
 def fib1     = \acc. pair (snd acc) (+ (fst acc) (snd acc));
 def fib      = \n. snd (n fib1 (pair 1 1));
+
+# acc = (n-1, n)
+def dec1     = \acc. pair (snd acc) (plus1 (snd acc));
+def dec      = \n. fst (n dec1 (pair 0 0));
+
+# acc = (is_even?, result)
+# def half1    = \acc. pair (not (fst acc)) ((fst acc) (plus1 (snd acc)) (snd acc));
+# def half     = \n. snd (n half1 (pair ff 0));
 
 # END_YOUR_CODE
 
@@ -71,3 +80,17 @@ def r2 = fib _1;
 def r3 = fib _2;
 def r5 = fib _3;
 def r8 = fib _4;
+
+def section_dec = 0;
+def r0 = dec _0;
+def r0 = dec _1;
+def r1 = dec _2;
+def r2 = dec _3;
+def r3 = dec _4;
+
+# def section_half = 0;
+# def r0 = half _0;
+# def r0 = half _1;
+# def r1 = half _2;
+# def r1 = half _3;
+# def r2 = half _4;
