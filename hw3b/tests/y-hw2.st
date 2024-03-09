@@ -53,3 +53,10 @@ def r0 = value (len nil);
 def r1 = value (len (cons tt nil));
 def r2 = value (len (cons tt (cons ff nil)));
 def r3 = value (len (cons tt (cons ff (cons tt nil))));
+
+def section_num_zero = 0;
+def r0 = value (num_zero nil);
+def r0 = value (num_zero (cons _1 nil));
+def r1 = value (num_zero (cons _0 nil));
+def r1 = value (num_zero (cons _0 (cons _1 nil)));
+def r2 = value (num_zero (cons _0 (cons _0 nil)));
