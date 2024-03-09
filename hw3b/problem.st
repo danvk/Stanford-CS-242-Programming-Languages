@@ -5,11 +5,6 @@ def _1 = inc _0;    # (int -> int) -> int -> int
 def _2 = inc _1;    # (int -> int) -> int -> int
 
 # Should return a church encoding of the sum of n and m
-# Must have:
-# z: int
-# f: int -> int
-# So we can't use inc with the church-encoded z=_0.
-# def sum = \n. \m. \f. \z. n f (m f z);
 def sum =   \n. \m. n inc m;
 
 # Should take a church encoded number and produce a regular int.

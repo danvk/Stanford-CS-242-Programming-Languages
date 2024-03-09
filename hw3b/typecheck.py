@@ -3,8 +3,7 @@ from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, PolymorphicTy
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
-    A = get_prog_env(prog)
-    types = [*A.values()]
+    A, types = get_prog_env(prog)
     return types
 
 
@@ -60,16 +59,18 @@ def get_prog_env(prog: Prog):
     global n
     n = -1
     A = {}
+    types = []
     for defn in prog.defns:
         S = set()
         t = get_type_and_constraints(A, defn.e, S)
         saturate(S)
         check_ill_typed(S)
         t = canonicalize(S, t)
+        assert len(canonicalizing) == 0, f'{canonicalizing=}'
         o = generalize(A, t)
         A[defn.s] = o
-        assert len(canonicalizing) == 0, f'{canonicalizing=}'
-    return A
+        types.append(o)
+    return A, types
 
 
 def saturate(S: set[tuple[TpVar, Type]]):
