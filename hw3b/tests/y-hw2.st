@@ -35,6 +35,10 @@ def add      = \m.\n. m inc n;
 def not      = \b. b ff tt;
 def value    = \n. n (+ 1) 0;
 
+# acc = (fib(n-2), fib(n-1))
+def fib1     = \acc. pair (snd acc) (+ (fst acc) (snd acc));
+def fib      = \n. snd (n fib1 (pair 1 1));
+
 # END_YOUR_CODE
 
 #########
@@ -60,3 +64,10 @@ def r0 = value (num_zero (cons _1 nil));
 def r1 = value (num_zero (cons _0 nil));
 def r1 = value (num_zero (cons _0 (cons _1 nil)));
 def r2 = value (num_zero (cons _0 (cons _0 nil)));
+
+def section_fib = 0;
+def r1 = fib _0;
+def r2 = fib _1;
+def r3 = fib _2;
+def r5 = fib _3;
+def r8 = fib _4;

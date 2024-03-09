@@ -64,8 +64,12 @@ def get_prog_env(prog: Prog):
         S = set()
         t = get_type_and_constraints(A, defn.e, S)
         saturate(S)
-        check_ill_typed(S)
-        t = canonicalize(S, t)
+        try:
+            check_ill_typed(S)
+            t = canonicalize(S, t)
+        except TypecheckingError as e:
+            print(f'Failed type checking on {defn}')
+            raise e
         assert len(canonicalizing) == 0, f'{canonicalizing=}'
         o = generalize(A, t)
         A[defn.s] = o
@@ -114,7 +118,7 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
     global canonicalizing
     try:
         if type in canonicalizing:
-            raise TypecheckingError("infinite")
+            raise TypecheckingError(f"infinite: {type}")
         canonicalizing.add(type)
 
         match type:
