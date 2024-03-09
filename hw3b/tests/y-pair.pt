@@ -3,3 +3,7 @@ def fst  = \p. p (\x.\y.x);
 def snd  = \p. p (\x.\y.y);
 def p = pair 2 0;
 def q = ifz (snd p) (fst p) (snd p);
+
+def z = pair 2 true;
+def x = fst z;
+def y = snd z;

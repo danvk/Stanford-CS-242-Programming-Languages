@@ -1,0 +1,5 @@
+# Well-typed
+
+def id = \x. x;
+def _ = id true;
+def _ = id 12;
