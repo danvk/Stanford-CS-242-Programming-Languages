@@ -1,4 +1,0 @@
-# Example from the slides
-def id = \x. x;
-def _ = id id;
-

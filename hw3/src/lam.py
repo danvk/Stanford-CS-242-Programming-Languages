@@ -30,7 +30,7 @@ class App(Expr):
 class IntConst(Expr):
     def __init__(self, i: int): self.i = i
     def __repr__(self): return "{}".format(self.i)
-
+    
 ### Types ###
 
 # Note, Type is an abstract base class; all instances are expected to be one of the cases below.
