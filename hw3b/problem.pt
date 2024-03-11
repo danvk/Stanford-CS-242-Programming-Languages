@@ -1,0 +1,38 @@
+# Example from the slides
+def id = \x. x;
+def _ = id id;
+
+# Pair
+def pair = \x.\y.\b. if b x y;
+def fst  = \p. p true;
+def snd  = \p. p false;
+
+# List
+def cons = \h.\t.\f.\x. f h (t f x);
+def nil  = \f.\x. x;
+
+# BEGIN_YOUR_CODE
+def map = \lst.\f. lst (\h. cons (f h)) nil;
+# Or, to be more explicit:
+# def map = \lst.\f. lst (\h.\t. cons (f h) t) nil;
+def compose = \f.\g.\x. f (g x);
+def sum = \lst. lst + 0;
+# END_YOUR_CODE
+
+# Tests
+
+def sqr = \x. * x x;
+
+def list = cons 1 (cons 2 (cons 3 (cons 4 nil))); # [1, 2, 3, 4]
+def r10 = sum list; # 1 + 2 + 3 + 4 = 10
+def squares = map list sqr; # [1, 4, 9, 16]
+def r30 = sum squares;  # 1 + 4 + 9 + 16 = 30
+
+def list0 = nil;  # []
+def squares0 = map list0 sqr; # []
+def r0 = sum squares0;
+
+def add1 = + 1;
+def sqr_and_inc = compose add1 sqr;
+def squares_plus = map list sqr_and_inc; # [2, 5, 10, 17]
+def r34 = sum squares_plus;  # 2 + 5 + 10 + 17 = 34

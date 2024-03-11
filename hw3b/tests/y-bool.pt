@@ -1,0 +1,4 @@
+def bool_to_int = \b. if b 1 0;
+
+def r0 = bool_to_int false;
+def r1 = bool_to_int true;

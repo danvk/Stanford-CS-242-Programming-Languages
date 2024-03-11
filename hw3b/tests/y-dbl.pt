@@ -1,0 +1,4 @@
+# Well-typed
+
+# The type should be ('a -> 'a) -> 'a -> 'a
+def dbl = \f.\x. f (f x);

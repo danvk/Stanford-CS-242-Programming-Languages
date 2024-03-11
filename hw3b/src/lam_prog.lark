@@ -1,0 +1,23 @@
+start: defns
+defns: (defn ";")*
+
+defn  : "def" IDENT "=" expr
+?expr : sexpr
+      | expr sexpr                     -> app
+?sexpr: IDENT                          -> var
+      | SYMBOL                         -> var
+      | "\\" IDENT "." expr            -> lam
+      | "(" expr ")"
+      | NUMBER                         -> num
+      | "let" IDENT "=" expr "in" expr -> let
+
+SYMBOL: /[-+*\/]/
+LETTER: /[_a-z]/
+DIGIT : /[0-9]/
+IDENT: LETTER (LETTER|DIGIT)*
+NUMBER: DIGIT+
+
+%ignore SPACE
+%ignore COMMENT
+SPACE  : /[ \t\f\r\n]/+
+COMMENT: /#[^\n]*/

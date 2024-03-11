@@ -1,0 +1,6 @@
+# Well-typed
+
+# This induced a loop in hw3 but is OK with polymorphic types and Hindley-Milner.
+def g = \x. x;
+def h = \f. f g;
+def y = g h;

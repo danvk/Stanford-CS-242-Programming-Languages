@@ -1,0 +1,100 @@
+
+# Bool (Church encoding)
+def tt   = \x.\y. x;
+def ff   = \x.\y. y;
+
+# Numeral (Church encoding)
+def inc  = \n.\f.\x. f (n f x);
+def _0   = \f.\x. x;
+def _1   = inc _0;
+def _2   = inc _1;
+def _3   = inc _2;
+def _4   = inc _3;
+
+# Pair
+def pair = \x.\y.\f. f x y;
+def fst  = \p. p tt;
+def snd  = \p. p ff;
+
+# List
+def cons = \h.\t.\f.\x. f h (t f x);
+def nil  = \f.\x. x;
+
+##########
+# PART 4 #
+##########
+# TASK: Implement the following functions.
+
+# BEGIN_YOUR_CODE
+def is_zero  = \n. n (\z. ff) tt;
+def len      = \l. l (\z. inc) _0;
+def num_zero = \l. l (\el. \acc. (is_zero el) (inc acc) acc) _0;
+
+# helpers
+def add      = \m.\n. m inc n;
+def not      = \b. if b false true;
+def plus1    = + 1;
+def value    = \n. n plus1 0;
+
+# acc = (fib(n-2), fib(n-1))
+def fib1     = \acc. pair (snd acc) (+ (fst acc) (snd acc));
+def fib      = \n. snd (n fib1 (pair 1 1));
+
+# acc = (n-1, n)
+def dec1     = \acc. pair (snd acc) (plus1 (snd acc));
+def dec      = \n. fst (n dec1 (pair 0 0));
+
+# can't have an accumulator with mixed types!
+# acc = (is_even?, result) : (bool, int)
+# def half1    = \acc. pair (not (fst acc)) (if (fst acc) (plus1 (snd acc)) (snd acc));
+
+# acc = (is_even? 1 or 0, result) : (int, int)
+def half1    = \acc. pair (ifz (fst acc) 1 0) (ifz (fst acc) (plus1 (snd acc)) (snd acc));
+def half     = \n. snd (n half1 (pair 0 0));
+
+# END_YOUR_CODE
+
+#########
+# TESTS #
+#########
+# NOTE: Expected outputs are given as comments on each line.
+
+def section_is_zero = 0;
+def r1 = (is_zero _0) 1 0;
+def r0 = (is_zero _1) 1 0;
+def r0 = (is_zero _2) 1 0;
+def r0 = (is_zero _3) 1 0;
+
+def section_len = 0;
+def r0 = value (len nil);
+def r1 = value (len (cons tt nil));
+def r2 = value (len (cons tt (cons ff nil)));
+def r3 = value (len (cons tt (cons ff (cons tt nil))));
+
+def section_num_zero = 0;
+def r0 = value (num_zero nil);
+def r0 = value (num_zero (cons _1 nil));
+def r1 = value (num_zero (cons _0 nil));
+def r1 = value (num_zero (cons _0 (cons _1 nil)));
+def r2 = value (num_zero (cons _0 (cons _0 nil)));
+
+def section_fib = 0;
+def r1 = fib _0;
+def r2 = fib _1;
+def r3 = fib _2;
+def r5 = fib _3;
+def r8 = fib _4;
+
+def section_dec = 0;
+def r0 = dec _0;
+def r0 = dec _1;
+def r1 = dec _2;
+def r2 = dec _3;
+def r3 = dec _4;
+
+def section_half = 0;
+def r0 = half _0;
+def r0 = half _1;
+def r1 = half _2;
+def r1 = half _3;
+def r2 = half _4;
