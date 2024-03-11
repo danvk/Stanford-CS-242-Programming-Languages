@@ -1,9 +1,9 @@
 
-# Bool
+# Bool (Church encoding)
 def tt   = \x.\y. x;
 def ff   = \x.\y. y;
 
-# Numeral
+# Numeral (Church encoding)
 def inc  = \n.\f.\x. f (n f x);
 def _0   = \f.\x. x;
 def _1   = inc _0;

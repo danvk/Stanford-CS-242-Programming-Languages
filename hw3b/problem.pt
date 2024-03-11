@@ -2,3 +2,33 @@
 def id = \x. x;
 def _ = id id;
 
+# Bool (Church encoding)
+def tt   = \x.\y. x;
+def ff   = \x.\y. y;
+
+# Pair
+def pair = \x.\y.\f. f x y;
+def fst  = \p. p tt;
+def snd  = \p. p ff;
+
+# List
+def cons = \h.\t.\f.\x. f h (t f x);
+def nil  = \f.\x. x;
+
+# BEGIN_YOUR_CODE
+def map = \lst.\f. lst;
+def compose = \f.\g.\x. x;
+def sum = \lst. lst;
+# END_YOUR_CODE
+
+# Tests
+
+def sqr = \x. * x x;
+def list = cons 1 (cons 2 (cons 3 (cons 4 nil)));
+def squares = map list sqr; # [1, 4, 9, 16]
+def r30 = sum squares;  # 1 + 4 + 9 + 16 = 30
+
+def add1 = + 1;
+def sqr_and_inc = compose sqr add1;
+def squares_plus = map list sqr_and_inc; # [2, 5, 10, 17]
+def r34 = sum squares_plus;  # 2 + 5 + 10 + 17 = 34
