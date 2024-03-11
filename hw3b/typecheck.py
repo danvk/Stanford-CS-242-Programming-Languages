@@ -1,5 +1,5 @@
 
-from src.lam import CONSTS, App, BoolConst, BoolTp, Expr, Func, IntConst, IntTp, Lam, PolymorphicType, Prog, QuantifiedType, TpVar, Type, TypecheckingError, Var
+from src.lam import CONSTS, App, BoolConst, BoolTp, Expr, Func, IntConst, IntTp, Lam, PolymorphicType, PrimitiveTp, Prog, QuantifiedType, TpVar, Type, TypecheckingError, Var
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
@@ -127,9 +127,7 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
         canonicalizing.add(type)
 
         match type:
-            case IntTp():
-                return type
-            case BoolTp():
+            case PrimitiveTp():
                 return type
             case Func(a=a, b=b):
                 return Func(canonicalize(S, a), canonicalize(S, b))
@@ -179,9 +177,7 @@ def free_vars(env_or_type: dict[TpVar, PolymorphicType] | PolymorphicType) -> se
             out.update(free_vars(t))
         return out
     match env_or_type:
-        case IntTp():
-            return set()
-        case BoolTp():
+        case PrimitiveTp():
             return set()
         case Func(a=a, b=b):
             return free_vars(a).union(free_vars(b))
@@ -194,9 +190,7 @@ def free_vars(env_or_type: dict[TpVar, PolymorphicType] | PolymorphicType) -> se
 def all_vars(type: Type) -> set[TpVar]:
     """Find all type variables mentioned in a Type."""
     match type:
-        case IntTp():
-            return set()
-        case BoolTp():
+        case PrimitiveTp():
             return set()
         case TpVar():
             return {type}
@@ -207,9 +201,7 @@ def all_vars(type: Type) -> set[TpVar]:
 
 def all_vars_in_order(type: Type) -> list[TpVar]:
     match type:
-        case IntTp():
-            return []
-        case BoolTp():
+        case PrimitiveTp():
             return []
         case TpVar():
             return [type]
@@ -224,9 +216,7 @@ def subst_type(type: Type, old: TpVar, new: TpVar) -> Type:
     match type:
         case TpVar():
             return new if type == old else type
-        case IntTp():
-            return type
-        case BoolTp():
+        case PrimitiveTp():
             return type
         case Func(a=a, b=b):
             return Func(subst_type(a, old, new), subst_type(b, old, new))

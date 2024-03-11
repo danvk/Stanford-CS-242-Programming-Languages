@@ -54,13 +54,13 @@ class PrimitiveTp(Type):
     def __eq__(self, other) -> bool: raise NotImplementedError()
     def __hash__(self) -> int: raise NotImplementedError()
 
-class IntTp(Type):
+class IntTp(PrimitiveTp):
     def __eq__(self, other) -> bool:
         return isinstance(other, IntTp)
     def __hash__(self): return hash('Int')
     def __repr__(self): return "int"
 
-class BoolTp(Type):
+class BoolTp(PrimitiveTp):
     def __eq__(self, other) -> bool:
         return isinstance(other, BoolTp)
     def __hash__(self): return hash('Bool')
@@ -85,7 +85,7 @@ class TpVar(Type):
     def __repr__(self): return self.s
 
 class QuantifiedType(PolymorphicType):
-    def __init__(self, vars: list[TpVar], o: PolymorphicType):
+    def __init__(self, vars: list[TpVar], o: Type):
         self.vars = vars
         self.o = o
 
