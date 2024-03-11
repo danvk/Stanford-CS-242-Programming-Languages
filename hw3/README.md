@@ -22,7 +22,7 @@ A final source of confusion was that `tests/n-app-copy.st` just seems wrong:
 def dbl = \x. * x 2;%
 ```
 
-My program (and Rylan's) both report a type of `dbl: int -> int` which seems correct.
+My program (and Rylan's) both report a type of `dbl: int -> int` which seems correct. I renamed this to `y-dbl.st`.
 
 Your program is expected to return a list of types, but the test harness doesn't check them: it only checks whether you say the program is valid or invalid. It would have been nice if it checked the types, too. Some of the comments in the assignment seem wrong, for example:
 
