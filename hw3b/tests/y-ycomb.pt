@@ -1,0 +1,10 @@
+# See https://en.wikipedia.org/wiki/Fixed-point_combinator
+# The famous Y Combinator:
+def y = \f. (\x. f (x x)) (\x. f (x x));
+# def y: ('a -> 'a) -> 'a
+
+def bigf = \f. \n. ifz n 1 (* n (f (- n 1)));
+def fac = y bigf;
+
+def r6 = fac 3;
+def r24 = fac 4;
