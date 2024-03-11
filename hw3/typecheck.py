@@ -1,10 +1,17 @@
 
-from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, PolymorphicType, Prog, QuantifiedType, TpVar, Type, TypecheckingError, Var
+from src.lam import CONSTS, App, Expr, Func, IntConst, IntTp, Lam, Prog, TpVar, Type, TypecheckingError, Var
 from typing import List
 
 def typecheck(prog: Prog) -> List[Type]:
-    A = get_prog_env(prog)
-    types = [*A.values()]
+    A, S = get_prog_env_and_constraints(prog)
+    saturate(S)
+    check_ill_typed(S)
+
+    # If there are no type errors, return a list of Types, one for each definition
+    types = []
+    for defn in prog.defns:
+        types.append(canonicalize(S, A[defn.s]))
+        assert len(canonicalizing) == 0, f'{canonicalizing=}'
     return types
 
 
@@ -16,7 +23,7 @@ def get_fresh_type():
 
 
 def get_type_and_constraints(
-    A: dict[str, PolymorphicType],
+    A: dict[str, Type],
     e: Expr,
     S: set[tuple[Type, Type]],
 ) -> Type:
@@ -29,15 +36,7 @@ def get_type_and_constraints(
         case Var(s=s) if s in CONSTS:
             return CONSTS[s]
         case Var(s=s) if s in A:
-            t = A[s]
-            match t:
-                case QuantifiedType(vars=vars, o=o):
-                    # Create a fresh type variable for each of vars
-                    for var in vars:
-                        o = subst_type(o, var, get_fresh_type())
-                    return o
-                case _:
-                    return t
+            return A[s]
         case Var(s=s):
             # free variable
             raise TypecheckingError(f'undefined variable {s}')
@@ -55,21 +54,16 @@ def get_type_and_constraints(
             return beta
 
 
-def get_prog_env(prog: Prog):
+def get_prog_env_and_constraints(prog: Prog):
     """Gather the environment and constraints for a program."""
     global n
     n = -1
+    S = set()
     A = {}
     for defn in prog.defns:
-        S = set()
         t = get_type_and_constraints(A, defn.e, S)
-        saturate(S)
-        check_ill_typed(S)
-        t = canonicalize(S, t)
-        o = generalize(A, t)
-        A[defn.s] = o
-        assert len(canonicalizing) == 0, f'{canonicalizing=}'
-    return A
+        A[defn.s] = t
+    return A, S
 
 
 def saturate(S: set[tuple[TpVar, Type]]):
@@ -139,76 +133,3 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
 
     finally:
         canonicalizing.remove(type)
-
-
-def get_polymorphic_type_var(i: int) -> TpVar:
-    c = chr(ord('a') + i)
-    return TpVar(f"'{c}")
-
-
-def generalize(env: dict[TpVar, PolymorphicType], type: Type) -> PolymorphicType:
-    fv = free_vars(env)
-    vars = [v for v in all_vars_in_order(type) if v not in fv]
-    if vars:
-        o = type
-        pvars = set()
-        for i, var in enumerate(vars):
-            pv = get_polymorphic_type_var(i)
-            o = subst_type(o, var, pv)
-            pvars.add(pv)
-        return QuantifiedType(vars=pvars, o=o)
-    return type
-
-
-def free_vars(env_or_type: dict[TpVar, PolymorphicType] | PolymorphicType) -> set[TpVar]:
-    if isinstance(env_or_type, dict):
-        out = set()
-        for x, t in env_or_type.items():
-            out.update(free_vars(t))
-        return out
-    match env_or_type:
-        case IntTp():
-            return set()
-        case Func(a=a, b=b):
-            return free_vars(a).union(free_vars(b))
-        case TpVar() as t:
-            return set([t])
-        case QuantifiedType(vars=vars, o=o):
-            return free_vars(o).difference(vars)
-
-
-def all_vars(type: Type) -> set[TpVar]:
-    """Find all type variables mentioned in a Type."""
-    match type:
-        case IntTp():
-            return set()
-        case TpVar():
-            return {type}
-        case Func(a=a, b=b):
-            return all_vars(a).union(all_vars(b))
-    raise ValueError(type)
-
-
-def all_vars_in_order(type: Type) -> list[TpVar]:
-    match type:
-        case IntTp():
-            return []
-        case TpVar():
-            return [type]
-        case Func(a=a, b=b):
-            vars = all_vars_in_order(a)
-            vars_b = all_vars_in_order(b)
-            return vars + [v for v in vars_b if v not in vars]
-    raise ValueError(type)
-
-
-def subst_type(type: Type, old: TpVar, new: TpVar) -> Type:
-    match type:
-        case TpVar():
-            return new if type == old else type
-        case IntTp():
-            return type
-        case Func(a=a, b=b):
-            return Func(subst_type(a, old, new), subst_type(b, old, new))
-
-    raise ValueError(type)
