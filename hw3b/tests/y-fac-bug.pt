@@ -1,2 +1,0 @@
-# The type should be ('a -> 'a) -> 'a -> 'a
-def direct_2 = \f.\x. f (f x);  # ('a -> 'a) -> 'b -> 'a
