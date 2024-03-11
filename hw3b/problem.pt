@@ -2,21 +2,19 @@
 def id = \x. x;
 def _ = id id;
 
-# Bool (Church encoding)
-def tt   = \x.\y. x;
-def ff   = \x.\y. y;
-
 # Pair
-def pair = \x.\y.\f. f x y;
-def fst  = \p. p tt;
-def snd  = \p. p ff;
+def pair = \x.\y.\b. if b x y;
+def fst  = \p. p true;
+def snd  = \p. p false;
 
 # List
 def cons = \h.\t.\f.\x. f h (t f x);
 def nil  = \f.\x. x;
 
 # BEGIN_YOUR_CODE
-def map = \lst.\f. lst (\h.\t. cons (f h) t) nil;
+def map = \lst.\f. lst (\h. cons (f h)) nil;
+# Or, to be more explicit:
+# def map = \lst.\f. lst (\h.\t. cons (f h) t) nil;
 def compose = \f.\g.\x. f (g x);
 def sum = \lst. lst + 0;
 # END_YOUR_CODE
