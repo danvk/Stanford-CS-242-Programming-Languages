@@ -1,4 +1,6 @@
-# Homework 3b (bonus): Hindley-Milner
+# Homework 3b (bonus): Hindley-Milner and Polymorphic Types
+
+## Part 1: Hindley-Milner
 
 Implement Hindley-Milner type inference in `typecheck.py`.
 
@@ -27,3 +29,17 @@ Open Questions:
 - How would you define a type constructor like `List('a)` in this system?
 - The slides show `o → ∀⍺.o | t`. Is it `⍺.o` instead of `⍺.t` to support multiple type variables? If you support that directly, can it be `o → ∀⍺1,...,⍺N.t | t`?
 - Is `free_vars` necessary? In my tests, it always evaluates to the empty set.
+
+## Part 2: Programming with Polymorphic Types
+
+Implement these three functions in `problem.pt`:
+
+- `map`
+- `compose`
+- `sum`
+
+The tests are expected to type check and produce the expected results.
+
+Once you've implemented part 1, you can run your code using:
+
+    python3 src/main.py problem.pt
