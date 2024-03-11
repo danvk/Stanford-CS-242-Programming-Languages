@@ -29,6 +29,7 @@ Open Questions:
 - How would you define a type constructor like `List('a)` in this system?
 - The slides show `o → ∀⍺.o | t`. Is it `⍺.o` instead of `⍺.t` to support multiple type variables? If you support that directly, can it be `o → ∀⍺1,...,⍺N.t | t`?
 - Is `free_vars` necessary? In my tests, it always evaluates to the empty set.
+- I'm unable to use heterogeneous pair types in accumulators in `tests/y-hw2.pt`. Is this a bug in my implementation or a flaw in this type system?
 
 ## Part 2: Programming with Polymorphic Types
 
