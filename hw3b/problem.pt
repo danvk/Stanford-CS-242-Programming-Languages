@@ -12,9 +12,7 @@ def fst  = \p. p tt;
 def snd  = \p. p ff;
 
 # List
-# def cons: 'a -> (('a -> 'b -> 'c) -> 'd -> 'b) -> ('a -> 'b -> 'c) -> 'd -> 'c
 def cons = \h.\t.\f.\x. f h (t f x);
-# def nil: 'a -> 'b -> 'b
 def nil  = \f.\x. x;
 
 # BEGIN_YOUR_CODE
@@ -27,7 +25,6 @@ def sum = \lst. lst + 0;
 
 def sqr = \x. * x x;
 
-# list: (int -> 'a -> 'a) -> 'a -> 'a
 def list = cons 1 (cons 2 (cons 3 (cons 4 nil))); # [1, 2, 3, 4]
 def r10 = sum list; # 1 + 2 + 3 + 4 = 10
 def squares = map list sqr; # [1, 4, 9, 16]
