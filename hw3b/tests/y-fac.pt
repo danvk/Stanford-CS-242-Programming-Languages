@@ -1,10 +1,7 @@
-# Bool
-def tt   = \x.\y. x;  # 'a -> 'b -> 'a
-def ff   = \x.\y. y;  # 'a -> 'b -> 'b
-
 # Numeral
 def inc  = \n.\f.\x. f (n f x);
 
+# Note that _0 has a different type than the other numbers.
 def _0   = \f.\x. x;  # 'a         -> 'b -> 'b
 def _1   = inc _0;    # ('a -> 'b) -> 'c -> 'b
 def _2   = inc _1;    # ('a -> 'b) -> 'c -> 'b
@@ -12,11 +9,11 @@ def _3   = inc _2;    # ('a -> 'b) -> 'c -> 'b
 def _4   = inc _3;    # ('a -> 'b) -> 'c -> 'b
 
 # Pair
-def pair = \x.\y.\f. f x y;
-def fst  = \p. p tt;
-def snd  = \p. p ff;
+def pair = \x.\y.\b. if b x y;
+def fst  = \p. p true;
+def snd  = \p. p false;
 
-def plus1 = \n. + 1 n;  # int -> int
+def plus1 = + 1;  # int -> int
 
 # acc = (n, n!)
 def fac_help = \acc. pair (plus1 (fst acc)) (* (plus1 (fst acc)) (snd acc));
@@ -29,16 +26,8 @@ def r2 = fac _2;
 def r6 = fac _3;
 def r24 = fac _4;
 
-def id = \x. x;
-
 # value: ((int -> int) -> int -> 'a) -> 'a
 def value    = \n. n (+ 1) 0;
 
-# it is possible for value to produce something other than an int:
-def _ = value (\f. \z. id);
-
-# _: int
-def _ = snd (fac_help (pair 0 1));
-
-# r1: 'a
-def r1 = fac _0;
+# it is, in fact, possible for value to produce something other than an int:
+def _ = value (\f. \z. true);
