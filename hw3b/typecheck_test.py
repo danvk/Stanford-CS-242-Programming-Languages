@@ -79,36 +79,3 @@ def test_canonicalize():
     t = Func(a0, Func(a1, a2))
     t = canonicalize(S, t)
     assert t == Func(Func(a1, a1), Func(a1, a1))
-
-# A: {}
-# S: {
-#    (a0, a1 -> a3),
-#    (a0, a3 -> a2)
-# }
-
-"""
-unit test:
-a0 -> a1 -> a2
-{(a0, a1 -> a3), (a0, a3 -> a2)}
-{
-    (a1, a2),
-    (a0, a3 -> a2),
-    (a3, a2),
-    (a3 -> a2, a1 -> a3),
-    (a1 -> a3, a0),
-    (a3, a1),
-    (a3 -> a2, a0),
-    (a0, a1 -> a3),
-    (a1 -> a3, a3 -> a2),
-    (a2, a3),
-    (a1, a3),
-    (a2, a1)
-}
-(a1 -> a1) -> a2 -> a1
-
-type checker:
-a0 -> a1 -> a2
-{}
-{(a0, a1 -> a3), (a0, a3 -> a2)}
-
-"""

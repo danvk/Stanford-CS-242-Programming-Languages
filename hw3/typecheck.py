@@ -129,7 +129,7 @@ def canonicalize(S: set[tuple[Type, Type]], type: Type) -> Type:
                 if equivs:
                     for t in equivs:
                         assert isinstance(t, TpVar)
-                    return min(equivs, key=lambda t: t.s)
+                    return min([type] + equivs, key=lambda t: t.s)
                 return type
         raise ValueError(type)
 
