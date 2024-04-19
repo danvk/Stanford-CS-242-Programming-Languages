@@ -46,10 +46,10 @@ def dec      = \n. fst (n dec1 (pair 0 0));
 
 # can't have an accumulator with mixed types!
 # acc = (is_even?, result) : (bool, int)
-# def half1    = \acc. pair (not (fst acc)) (if (fst acc) (plus1 (snd acc)) (snd acc));
+def half1    = \acc. pair (not (fst acc)) (if (fst acc) (plus1 (snd acc)) (snd acc));
 
 # acc = (is_even? 1 or 0, result) : (int, int)
-def half1    = \acc. pair (ifz (fst acc) 1 0) (ifz (fst acc) (plus1 (snd acc)) (snd acc));
+# def half1    = \acc. pair (ifz (fst acc) 1 0) (ifz (fst acc) (plus1 (snd acc)) (snd acc));
 def half     = \n. snd (n half1 (pair 0 0));
 
 # END_YOUR_CODE

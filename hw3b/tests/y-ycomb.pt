@@ -8,3 +8,7 @@ def fac = y bigf;
 
 def r6 = fac 3;
 def r24 = fac 4;
+
+def bigf_nobase = \f. \n. (* n (f (- n 1)));
+def fac_nobase = y bigf_nobase;
+def inf = fac_nobase 3;

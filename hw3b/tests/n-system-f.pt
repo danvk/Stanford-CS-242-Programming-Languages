@@ -1,0 +1,3 @@
+# https://theory.stanford.edu/~blynn/lambda/systemf.html#:~:text=but-,rejects,-%3A
+# Example of a function typable in System F but not HM:
+def _ = (\f.f (+ 1) (f 0)) (\x.x);
