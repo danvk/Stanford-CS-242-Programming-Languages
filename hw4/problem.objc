@@ -18,7 +18,12 @@ false = [eval = \o. o.onfalse, ontrue = \o.o, onfalse = \o.o];
 # which returns the resulting negation of b.
 noter = [
   eval = \n. [
-    eval = \o.o, # IMPLEMENT THIS METHOD.
+    # IMPLEMENT THIS METHOD.
+    eval = \o. (
+        (n.b.ontrue <- \x.o.onfalse)
+        .onfalse <- \x.o.ontrue
+      ).eval,
+    # eval = \o.o,
     ontrue = \o.o,
     onfalse = \o.o
   ],
@@ -29,7 +34,12 @@ noter = [
 # through an and-er object that takes the and of the two user-defined fields b1 and b2.
 ander = [
   eval = \a. [
-    eval = \o.o, # IMPLEMENT THIS METHOD.
+    eval = \o. (
+        (a.b1.onfalse <- \x. [ eval = \z. o.onfalse ])
+        .ontrue <- (
+          \x. (a.b2.ontrue <- \y. o.ontrue).onfalse <- \y. o.onfalse
+        ).eval
+      ).eval,
     ontrue = \o.o,
     onfalse = \o.o
   ],
@@ -67,9 +77,14 @@ two = one.succ;
 # n1 and n2 together.
 adder = [
   eval = \a. ([
-    iszero = \o. o, # IMPLEMENT THIS METHOD.
-    pred = \o. o, # IMPLEMENT THIS METHOD.
-    succ = \o. o # IMPLEMENT THIS METHOD.
+    iszero = \o. o.result.iszero, # IMPLEMENT THIS METHOD.
+    pred = \o. o.result.pred, # IMPLEMENT THIS METHOD.
+    succ = \o. o.result.succ, # IMPLEMENT THIS METHOD.
+    result = \o. ((
+        (a.n1.iszero)
+        .ontrue <- \x. a.n2)
+        .onfalse <- \x. (a.n1 <- \z. a.n1.pred).eval.succ
+      ).eval
   ]),
   n1 = \o.o,
   n2 = \o.o

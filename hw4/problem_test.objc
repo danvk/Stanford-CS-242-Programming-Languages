@@ -23,11 +23,11 @@ TEST_ADD;
 ((((((adder.n1 <- \o.one).n2 <- \o.zero).eval).pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # YES
 ((((((adder.n1 <- \o.one).n2 <- \o.zero).eval).succ.pred.pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # YES
 
-# 0 + 1.
+# # 0 + 1.
 ((((((adder.n1 <- \o.zero).n2 <- \o.one).eval).iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # NO
 ((((((adder.n1 <- \o.zero).n2 <- \o.one).eval).pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # YES
 
-# 2 + 2.
+# # 2 + 2.
 ((((((adder.n1 <- \o.two).n2 <- \o.two).eval).pred.pred.pred.pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # YES
 ((((((adder.n1 <- \o.two).n2 <- \o.two).eval).pred.pred.pred.iszero).ontrue <- \o.YES).onfalse <- \o.NO).eval; # NO
 STOP VERIFY;
