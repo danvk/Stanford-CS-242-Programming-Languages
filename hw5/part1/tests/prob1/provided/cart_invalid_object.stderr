@@ -9,8 +9,8 @@ error[E0382]: use of moved value: `empty`
 12 |             empty.add_item(1);
    |             ^^^^^ value used here after move
    |
-note: this function takes ownership of the receiver `self`, which moves `empty`
+note: `part1::prob1::cart::Empty::add_item` takes ownership of the receiver `self`, which moves `empty`
   --> src/prob1/cart.rs
    |
-   |     pub fn add_item(self, cost: u32) -> NonEmpty {
+   |     pub fn add_item(self, item_cost: u32) -> NonEmpty {
    |                     ^^^^

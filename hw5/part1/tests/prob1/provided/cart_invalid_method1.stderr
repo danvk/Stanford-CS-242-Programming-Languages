@@ -2,4 +2,4 @@ error[E0599]: no method named `checkout` found for struct `part1::prob1::cart::E
   --> tests/prob1/provided/cart_invalid_method1.rs:11:19
    |
 11 |             empty.checkout();
-   |                   ^^^^^^^^ method not found in `part1::prob1::cart::Empty`
+   |                   ^^^^^^^^ method not found in `Empty`
