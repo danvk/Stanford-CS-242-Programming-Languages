@@ -1,0 +1,16 @@
+error[E0382]: use of moved value: `cart1`
+  --> tests/prob1/custom/cart_invalid_add_old.rs:13:26
+   |
+10 |             let cart1 = empty.add_item(10);
+   |                 ----- move occurs because `cart1` has type `NonEmpty`, which does not implement the `Copy` trait
+11 |             let _cart2 = cart1.add_item(11);
+   |                                ------------ `cart1` moved due to this method call
+12 |             // cart1 should be inaccessible after adding to it.
+13 |             let _cart3 = cart1.add_item(12);
+   |                          ^^^^^ value used here after move
+   |
+note: `NonEmpty::add_item` takes ownership of the receiver `self`, which moves `cart1`
+  --> src/prob1/cart.rs
+   |
+   |     pub fn add_item(self, item_cost: u32) -> NonEmpty {
+   |                     ^^^^
