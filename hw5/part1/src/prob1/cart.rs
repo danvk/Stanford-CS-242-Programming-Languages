@@ -42,6 +42,12 @@ impl Empty {
             total_cost: item_cost,
         }
     }
+    pub fn acct_num(&self) -> u32 {
+        self.account_num
+    }
+    pub fn tot_cost(&self) -> u32 {
+        0
+    }
 }
 pub struct NonEmpty {
     account_num: u32,
@@ -60,6 +66,12 @@ impl NonEmpty {
     pub fn checkout(self) -> Checkout {
         Checkout { cart: self }
     }
+    pub fn acct_num(&self) -> u32 {
+        self.account_num
+    }
+    pub fn tot_cost(&self) -> u32 {
+        self.total_cost
+    }
 }
 pub struct Checkout {
     cart: NonEmpty,
@@ -70,6 +82,12 @@ impl Checkout {
     }
     pub fn order(self) -> Empty {
         self.cart.clear_items()
+    }
+    pub fn acct_num(&self) -> u32 {
+        self.cart.account_num
+    }
+    pub fn tot_cost(&self) -> u32 {
+        self.cart.total_cost
     }
 }
 
