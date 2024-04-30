@@ -1,0 +1,5 @@
+error[E0599]: no method named `add_item` found for struct `Checkout` in the current scope
+  --> tests/prob1/custom/cart_invalid_example.rs:12:18
+   |
+12 |             cart.add_item(32);
+   |                  ^^^^^^^^ method not found in `Checkout`
