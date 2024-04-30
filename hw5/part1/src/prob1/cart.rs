@@ -22,9 +22,55 @@ use crate::prob1::server::internal_login;
 //
 // Here T denotes a type. Note that each T can be a different type.
 //===== BEGIN_CODE =====//
-pub struct Cart {}
-pub struct Empty {}
-pub struct NonEmpty {}
-pub struct Checkout {}
+pub struct Cart {
+}
+impl Cart {
+    pub fn login(id: String, pw: String) -> Result<Empty,()> {
+        match internal_login(id, pw) {
+            Some(account_num) => Ok(Empty {account_num}),
+            None => Err(()),
+        }
+    }
+}
+pub struct Empty {
+    account_num: u32,
+}
+impl Empty {
+    pub fn add_item(self, item_cost: u32) -> NonEmpty {
+        NonEmpty {
+            account_num: self.account_num,
+            total_cost: item_cost,
+        }
+    }
+}
+pub struct NonEmpty {
+    account_num: u32,
+    total_cost: u32,
+}
+impl NonEmpty {
+    pub fn add_item(self, item_cost: u32) -> NonEmpty {
+        NonEmpty {
+            account_num: self.account_num,
+            total_cost: self.total_cost + item_cost,
+        }
+    }
+    pub fn clear_items(self) -> Empty {
+        Empty { account_num: self.account_num }
+    }
+    pub fn checkout(self) -> Checkout {
+        Checkout { cart: self }
+    }
+}
+pub struct Checkout {
+    cart: NonEmpty,
+}
+impl Checkout {
+    pub fn cancel(self) -> NonEmpty {
+        self.cart
+    }
+    pub fn order(self) -> Empty {
+        self.cart.clear_items()
+    }
+}
 
 //===== END_CODE =====//
