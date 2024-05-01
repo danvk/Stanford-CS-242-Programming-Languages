@@ -22,6 +22,10 @@ It was helpful to disable part 3. This required commenting out lines in two file
 
 Getting errors in VS Code seems to require running `cargo build` with the relevant source file included in the dependency tree.
 
+I didn't bother writing custom tests for part 2.
+
 ## Part 3
 
 I found the comment about N=100 in the assignment to be pretty confusing. Is this just saying that infinite recursion is OK because the server will eventually acknowledge all packets that I send? The type signatures of the skeleton code imply that this is the case.
+
+I didn't bother writing custom tests for part 3.
