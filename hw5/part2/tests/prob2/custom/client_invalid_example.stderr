@@ -1,0 +1,5 @@
+error[E0599]: no method named `send_close` found for struct `Syned` in the current scope
+  --> tests/prob2/custom/client_invalid_example.rs:15:19
+   |
+15 |             syned.send_close(&mut server);
+   |                   ^^^^^^^^^^ method not found in `Syned`
