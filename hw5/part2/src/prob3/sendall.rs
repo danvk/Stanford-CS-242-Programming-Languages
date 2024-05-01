@@ -38,26 +38,40 @@ pub fn send_all(server: &mut Server, pkts: &Vec<Pkt>) {
 // Connect the client to the server. This function should ensure that the server acknowledges the
 // connection before returning a Syned client.
 fn try_syn(server: &mut Server, client: Initial) -> Syned {
-    // TODO: Implement this function
+    // Note: the type signature implies that this should retry infinitely.
     //===== BEGIN_CODE =====//
-    unimplemented!()
+    let result = client.send_syn(server);
+    match result {
+        Ok(syned) => syned,
+        Err(init) => try_syn(server, init)
+    }
     //===== END_CODE =====//
 }
 
 // Use the client to reliably send the given packets to the server. This function should ensure that
 // all packets have been delivered to the server.
 fn try_pkts(server: &mut Server, client: SynAcked, pkts: &Vec<Pkt>) -> SynAcked {
-    // TODO: Implement this function
     //===== BEGIN_CODE =====//
-    unimplemented!()
+    let mut c = client;
+    loop {
+        let remaining_pkts = pkts_remove(pkts, &c.ids_sent());
+        if remaining_pkts.is_empty() {
+            break;
+        }
+        c = c.send_pkts(server, &remaining_pkts);
+    }
+    c
     //===== END_CODE =====//
 }
 
 // Close the client connection to the server. The function should ensure that the server
 // acknowledges the end of the connection before returning a Closed client.
 fn try_close(server: &mut Server, client: SynAcked) -> Closed {
-    // TODO: Implement this function
     //===== BEGIN_CODE =====//
-    unimplemented!()
+    let result = client.send_close(server);
+    match result {
+        Ok(closed) => closed,
+        Err(synacked) => try_close(server, synacked),
+    }
     //===== END_CODE =====//
 }
