@@ -14,3 +14,10 @@ It's important that methods take a `self` parameter, not `&self`. This means tha
 ## Part 2
 
 The problem description is a huge wall of text. This is going to be a bit of a slog!
+
+It was helpful to disable part 3. This required commenting out lines in two files:
+
+    part2/src/lib.rs
+    part2/tests/lib.rs
+
+Getting errors in VS Code seems to require running `cargo build` with the relevant source file included in the dependency tree.

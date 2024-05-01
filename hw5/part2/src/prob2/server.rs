@@ -56,7 +56,7 @@ impl Server {
             _ => true,
         }
     }
-    
+
     // every server will accept all packets after rejecting `RECV_REJ_MAX` packets.
     const RECV_REJ_MAX: u32 = 100;
 
