@@ -9,7 +9,7 @@ error[E0382]: use of moved value: `syned`
 16 |             syned.send_ack(&mut server);
    |             ^^^^^ value used here after move
    |
-note: this function takes ownership of the receiver `self`, which moves `syned`
+note: `Syned::send_ack` takes ownership of the receiver `self`, which moves `syned`
   --> src/prob2/client.rs
    |
    |     pub fn send_ack(self, server: &mut Server) -> SynAcked {
