@@ -25,8 +25,31 @@ use crate::prob2::server::{internal_send_pkts, internal_send_sig, Server};
 // Here T denotes a type. Note that each T can be a different type.
 //===== BEGIN_CODE =====//
 pub struct Client {}
+impl Client {
+    pub fn new() -> Initial {
+        Initial {}
+    }
+}
+
 pub struct Initial {}
+impl Initial {
+    pub fn send_syn(self, server: &mut Server) -> Result<Syned, Initial> {
+        let result = internal_send_sig(server, Sig::Syn);
+        match result {
+            Some(syn_ret) => Ok(Syned {}),
+            None => Err(self),
+        }
+    }
+}
+
 pub struct Syned {}
+impl Syned {
+    pub fn send_ack(self, server: &mut Server) -> SynAcked {
+        _ = internal_send_sig(server, Sig::Ack);
+        SynAcked {}
+    }
+}
+
 pub struct SynAcked {}
 pub struct Closed {}
 //===== END_CODE =====//
