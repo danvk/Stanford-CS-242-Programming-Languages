@@ -34,9 +34,32 @@
 ; Note: You can define any other helper functions.
 
 (define (attempt l)
-  (void)
+  ; We an assume l is non-empty.
+  ; Push a pair of the continuation and the other options onto the stack.
+  (call/cc (lambda (k)
+    (if (empty? (rest l)) #f (stack_push (list k (rest l))))
+    (first l)
+  ))
 )
 
 (define (assert b)
-  (void)
+  ; if the condition is true, just evaluate to true.
+  ; if the condition is false:
+  ; - if the stack is non-empty, go back
+  ; - if the stack is empty, return false.
+  (if b
+    #t
+    (if (stack_empty?)
+      #f
+      (let*
+        (
+          [pair (stack_pop)]
+          [k (first pair)]
+          [l (second pair)]
+        )
+        (if (empty? (rest l)) #f (stack_push (list k (rest l))))
+        (k (first l))
+      )
+    )
+  )
 )
