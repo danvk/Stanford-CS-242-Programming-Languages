@@ -91,9 +91,12 @@
     (if blank
       ; fill in the blank and recursively solve
       (let*
-        ([num (attempt (range 1 10))])
-        (assert (valid? state))  ; huge optimization
-        (solve (add_num state blank num))
+        (
+          [num (attempt (range 1 10))]
+          [next_state (add_num state blank num)]
+        )
+        (assert (valid? next_state))  ; huge optimization
+        (solve next_state)
       )
       ; check whether this solution is valid
       (and (assert (valid? state)) state)
