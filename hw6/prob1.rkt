@@ -45,7 +45,7 @@
   ; (i.e., either inside except f or outside (try except ...)),
   ; you should print out an error message ThrowError and exit to the top-level.
   (if (stack_empty?)
-    ((let* () (print "ThrowError\n") (exit)))
+    ((let* () (printf "ThrowError") (exit)))
     (let*
       ([pair (stack_pop)]
        [k (first pair)]
@@ -57,7 +57,7 @@
 
 (define (try_except try_f except_f)
   ; "push the current continuation k and except_f to the stack"
-  (stack_push (list (call/cc (lambda (k) k)) except_f))
+  (call/cc (lambda (k) (stack_push (list k except_f))))
   (let* ([result (try_f)])
     (stack_pop)
     result)
