@@ -41,9 +41,31 @@
 ; Note: You can define any other helper functions.
 
 (define (throw msg)
-  (void)
+  ; If an exception is thrown by throw outside try f
+  ; (i.e., either inside except f or outside (try except ...)),
+  ; you should print out an error message ThrowError and exit to the top-level.
+  ; TODO: push a pair onto the stack to simplify?
+  (if (stack_empty?)
+    ((lambda () (print "ThrowError\n") (exit)))
+    (let*
+      ([except_f (stack_pop)])
+      (if (stack_empty?)
+        ((lambda () (print "ThrowError\n") (exit)))
+        (let*
+          ([k (stack_pop)])
+          (k (except_f msg))
+        )
+      )
+    )
+  )
 )
 
 (define (try_except try_f except_f)
-  (void)
+  ; "push the current continuation k and except_f to the stack"
+  (stack_push (call/cc (lambda (k) k)))
+  (stack_push except_f)
+  (let* ([result (try_f)])
+    (stack_pop)
+    (stack_pop)
+    result)
 )
