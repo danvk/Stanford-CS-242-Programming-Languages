@@ -33,11 +33,16 @@
 ; Task: Implement `attempt` and `assert` using `call/cc`.
 ; Note: You can define any other helper functions.
 
+; push (list k lst) onto the stack if lst is nonempty.
+(define (push_if_nonempty k lst)
+  (if (empty? lst) #f (stack_push (list k lst)))
+)
+
 (define (attempt l)
   ; We an assume l is non-empty.
   ; Push a pair of the continuation and the other options onto the stack.
   (call/cc (lambda (k)
-    (if (empty? (rest l)) #f (stack_push (list k (rest l))))
+    (push_if_nonempty k (rest l))
     (first l)
   ))
 )
@@ -57,7 +62,7 @@
           [k (first pair)]
           [l (second pair)]
         )
-        (if (empty? (rest l)) #f (stack_push (list k (rest l))))
+        (push_if_nonempty k (rest l))
         (k (first l))
       )
     )
