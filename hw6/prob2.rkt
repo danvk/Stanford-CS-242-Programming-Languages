@@ -26,8 +26,8 @@
         [(equal? op "+") (+ a b)]
         [(equal? op "-") (- a b)]
         [(equal? op "*") (* a b)]
-        [(equal? op "/") (if (equal? b 0) (throw "DivZero") (/ a b))]
-        [else (throw "OpError")]
+        [(equal? op "/") (if (equal? b 0) (throw 'DivZero) (/ a b))]
+        [else (throw 'OpError)]
       )
     )
   )
