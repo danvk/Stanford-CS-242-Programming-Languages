@@ -79,6 +79,24 @@
 ; Task: Implement `solve` using `attempt` and `assert`.
 ; Note: You can define any other helper functions.
 
+(define (valid? state)
+  (and
+    (valid_row? state)
+    (valid_col? state)
+    (valid_subg? state)))
+
 (define (solve state)
-  (void)
+  (let*
+    ([blank (get_blank_pos state)])
+    (if blank
+      ; fill in the blank and recursively solve
+      (let*
+        ([num (attempt (range 1 10))])
+        (assert (valid? state))  ; huge optimization
+        (solve (add_num state blank num))
+      )
+      ; check whether this solution is valid
+      (and (assert (valid? state)) state)
+    )
+  )
 )
