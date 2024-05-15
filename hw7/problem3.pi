@@ -44,7 +44,7 @@ VALUE | SET_A_GET;
 # Expected Output:
 #   b -> result. 0
 # | ...
-# VALUE | SET_AB_GET;
+VALUE | SET_AB_GET;
 
 # This tests two concurrent requests. The result depends on non-deterministic choice
 # Expected Output:
@@ -54,12 +54,12 @@ VALUE | SET_A_GET;
 # --- State 1 ---
 #   b -> result. 0
 # | ...
-# VALUE | SET_A_or_B_GET;
+VALUE | SET_A_or_B_GET;
 
 # Expected Output:
 #   a -> result1. 0
 # | a -> result2. 0
 # | ...
-# VALUE | SET_A_GET_GET;
+VALUE | SET_A_GET_GET;
 
 
