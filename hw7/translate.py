@@ -21,10 +21,11 @@ PI0 = pi.Parallel([])
 
 # f is the result channel
 def translate(e: lam.Expr, channel: str) -> pi.Proc:
+    print(f'{e=}, {channel=}')
     match e:
         case lam.Var(s=x):
             # T(x, f) := \overline x f . 0 := x -> c. P
-            return pi.Send(x, channel, PI0)
+            return pi.Send(channel, x, PI0)
 
         case lam.Lam(s=x, e=m):
             # T(λx.M, f) := f(x).f(u).T(M, u)
