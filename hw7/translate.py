@@ -31,7 +31,7 @@ def translate(e: lam.Expr, channel: str) -> pi.Proc:
             # T(λx.M, f) := f(x).f(u).T(M, u)
             #            := (x <- f).(u <- f).T(M, u)
             u = get_fresh_var()
-            return pi.Receive(x, channel, pi.Receive(u, channel, translate(m, channel)))
+            return pi.Receive(channel, x, pi.Receive(channel, u, translate(m, u)))
 
         case lam.App(e1=m, e2=n):
             # T (M N,f) := νc.νd. (T (M,c) | cd.cf.0 | !d(v).T (N,v))
