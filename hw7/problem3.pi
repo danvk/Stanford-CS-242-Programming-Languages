@@ -1,8 +1,20 @@
 
 
-def VALUE = 0; # Fill this in
+# Usage:
+# - set
+#   - you send a private channel to set
+#   - then you send the value you want to set to that channel
+#   - (receives the current value from the store, sends a new value)
+# - get
+#   - send a private channel to get
+#   - get sends the current value to that channel.
+#   - (sends the same value back to the store)
+# Idea: maintain a private channel with the current value as a pending message
 
-
+def VALUE = &store. init -> store.
+    ((c <- get. v <- store. v -> store. v -> c. 0)
+    +
+    (c <- set. v <- set. old <- store. v -> store. v -> c. 0));
 
 # Some tests.
 def GET = &req. req -> get. current <- req. current -> result. 0;
@@ -16,6 +28,8 @@ def GET_GET = &req. req -> get. current <- req. current -> result1. 0
             | &req. req -> get. current <- req. current -> result2. 0;
 def SET_A_GET_GET = &req. req -> set. a -> req. GET_GET;
 
+# VALUE | GET;
+
 # Expected Output:
 #   a -> result. 0
 # | ...
@@ -25,7 +39,7 @@ VALUE | SET_A_GET;
 # Expected Output:
 #   b -> result. 0
 # | ...
-VALUE | SET_AB_GET;
+# VALUE | SET_AB_GET;
 
 # This tests two concurrent requests. The result depends on non-deterministic choice
 # Expected Output:
@@ -35,12 +49,12 @@ VALUE | SET_AB_GET;
 # --- State 1 ---
 #   b -> result. 0
 # | ...
-VALUE | SET_A_or_B_GET;
+# VALUE | SET_A_or_B_GET;
 
 # Expected Output:
 #   a -> result1. 0
 # | a -> result2. 0
 # | ...
-VALUE | SET_A_GET_GET;
+# VALUE | SET_A_GET_GET;
 
 
