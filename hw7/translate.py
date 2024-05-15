@@ -40,8 +40,8 @@ def translate(e: lam.Expr, channel: str) -> pi.Proc:
             v = get_fresh_var('v')
             return pi.Nu(c, pi.Nu(d, pi.Parallel((
                 translate(m, c),
-                pi.Send(c, d, pi.Send(c, channel, PI0)),
-                pi.Replicate(pi.Receive(v, d, translate(n, v)))
+                pi.Send(d, c, pi.Send(channel, c, PI0)),
+                pi.Replicate(pi.Receive(d, v, translate(n, v)))
             ))))
 
     raise ValueError(e)
