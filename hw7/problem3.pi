@@ -13,12 +13,13 @@
 
 def VALUE = &store. (
     # initial set
-    c <- set. v <- set. v -> store.
+    c <- set. v <- set. v -> store. 0
+    |
     # subsequent state
-    !(
-        (c <- get. v <- store. v -> store. v -> c. 0)
+    !v <- store. (
+        (c <- get. v -> store. v -> c. 0)
         +
-        (c <- set. v <- set. old <- store. v -> store. 0)
+        (c <- set. v <- set. v -> store. 0)
     )
 );
 
