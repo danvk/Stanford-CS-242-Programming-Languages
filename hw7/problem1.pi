@@ -1,6 +1,6 @@
 
 
-def ECHO = 0; # Fill this in
+def ECHO = ! ( msg <- in. msg -> out. 0 );
 
 # Each client sends to the in channel, then gets a response on the out channel.
 def CLIENT1 = a -> in. response <- out. response -> c1. 0;
