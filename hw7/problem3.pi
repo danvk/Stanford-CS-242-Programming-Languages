@@ -11,10 +11,16 @@
 #   - (sends the same value back to the store)
 # Idea: maintain a private channel with the current value as a pending message
 
-def VALUE = &store. init -> store.
-    ((c <- get. v <- store. v -> store. v -> c. 0)
-    +
-    (c <- set. v <- set. old <- store. v -> store. v -> c. 0));
+def VALUE = &store. (
+    # initial set
+    c <- set. v <- set. v -> store.
+    # subsequent state
+    !(
+        (c <- get. v <- store. v -> store. v -> c. 0)
+        +
+        (c <- set. v <- set. old <- store. v -> store. 0)
+    )
+);
 
 # Some tests.
 def GET = &req. req -> get. current <- req. current -> result. 0;
