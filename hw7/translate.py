@@ -18,10 +18,8 @@ PI0 = pi.Parallel([])
 # \overline a x . P = send a message x on channel a, then P
 #                   = x -> c . P
 
-
 # f is the result channel
 def translate(e: lam.Expr, channel: str) -> pi.Proc:
-    print(f'{e=}, {channel=}')
     match e:
         case lam.Var(s=x):
             # T(x, f) := \overline x f . 0 := x -> c. P
@@ -41,7 +39,7 @@ def translate(e: lam.Expr, channel: str) -> pi.Proc:
             return pi.Nu(c, pi.Nu(d, pi.Parallel((
                 translate(m, c),
                 pi.Send(d, c, pi.Send(channel, c, PI0)),
-                pi.Replicate(pi.Receive(d, v, translate(n, v)))
+                pi.Replicate(pi.Receive(v, d, translate(n, v)))
             ))))
 
     raise ValueError(e)
