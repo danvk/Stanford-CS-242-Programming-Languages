@@ -19,6 +19,7 @@ PI0 = pi.Parallel([])
 #                   = x -> c . P
 
 
+# f is the result channel
 def translate(e: lam.Expr, channel: str) -> pi.Proc:
     match e:
         case lam.Var(s=x):
