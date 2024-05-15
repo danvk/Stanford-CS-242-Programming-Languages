@@ -19,7 +19,7 @@ def VALUE = &store. (
     !v <- store. (
         (c <- get. v -> store. v -> c. 0)
         +
-        (c <- set. new <- set. new -> store. 0)
+        (c <- set. new <- c. new -> store. 0)
     )
 );
 
