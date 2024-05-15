@@ -34,8 +34,6 @@ def GET_GET = &req. req -> get. current <- req. current -> result1. 0
             | &req. req -> get. current <- req. current -> result2. 0;
 def SET_A_GET_GET = &req. req -> set. a -> req. GET_GET;
 
-# VALUE | GET;
-
 # Expected Output:
 #   a -> result. 0
 # | ...
