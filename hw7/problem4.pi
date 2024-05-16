@@ -15,7 +15,18 @@ def TWO = !(&c. (_succ -> c. _succ -> c. _zero -> c.0 | c -> two. 0));
 #   - receive _zero on channel n => send _zero to c
 #   - receive _succ on channel c => send _succ to c
 
-def INC = c <- inc. n <- c. &v. v -> c. _succ -> v. !(msg <- n. msg -> v. 0);
+def INC = c <- inc.
+          n <- c.
+          &v.
+          v -> c.
+          _succ -> v.
+          !(
+            msg <- n.
+            msg -> v.
+            0
+#             [msg = _zero]. _zero -> v.0 +
+#             [msg = _succ]. _succ -> v.0
+          );
 
 # Expected output:
 #   _succ -> result. 0
@@ -53,10 +64,10 @@ TWO | INC | x <- two. &r. r->inc. x -> r. v <- r.
 # | _zero -> d. 0
 # | ...
 # With no something -> e. 0 at the top level
-ONE | INC | x <- one. &r. r->inc. x -> r. v <- r.
-                      &r. r->inc. v -> r. v2 <- r.
-                        x <- v2. (x -> a. 0 |
-                        x <- v2. (x -> b. 0 |
-                        x <- v2. (x -> c. 0 |
-                        x <- v2. (x -> d. 0 |
-                        x <- v2. (x -> e. 0)))));
+# ONE | INC | x <- one. &r. r->inc. x -> r. v <- r.
+#                       &r. r->inc. v -> r. v2 <- r.
+#                         x <- v2. (x -> a. 0 |
+#                         x <- v2. (x -> b. 0 |
+#                         x <- v2. (x -> c. 0 |
+#                         x <- v2. (x -> d. 0 |
+#                         x <- v2. (x -> e. 0)))));
