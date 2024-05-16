@@ -1,6 +1,6 @@
 
 
-def FIXED_ECHO = chan <- in. msg <- chan. msg -> chan. 0 ; # Fill this in
+def FIXED_ECHO = !chan <- in. msg <- chan. msg -> chan. 0 ; # Fill this in
 
 # Each client sends to the in channel, then gets a response, and then sends the
 # result to a unique channel (where it remains until the program can't be reduced).

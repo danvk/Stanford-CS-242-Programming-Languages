@@ -15,31 +15,35 @@ def TWO = !(&c. (_succ -> c. _succ -> c. _zero -> c.0 | c -> two. 0));
 #   - receive _zero on channel n => send _zero to c
 #   - receive _succ on channel c => send _succ to c
 
-def INC = c <- inc.
+def INC = !(c <- inc.
           n <- c.
           &v.
-          v -> c.
-          _succ -> v.
-          !(
+          &sem.
+          (
+          v -> c. _succ -> v. _zero -> sem. 0
+          |
+          !tmp <- sem.(
             msg <- n.
             msg -> v.
+            tmp -> sem.
             0
+          )));
+
 #             [msg = _zero]. _zero -> v.0 +
 #             [msg = _succ]. _succ -> v.0
-          );
 
 # Expected output:
 #   _succ -> result. 0
 # | _zero -> result. 0
 # | ...
-ZERO | INC | x <- zero. &r. r->inc. x -> r. v <- r. !(x <- v. x -> result. 0);
+# ZERO | INC | x <- zero. &r. r->inc. x -> r. v <- r. !(x <- v. x -> result. 0);
 
 # Expected output:
 #   _succ -> result. 0
 # | _succ -> result. 0
 # | _zero -> result. 0
 # | ...
-ONE | INC | x <- one. &r. r->inc. x -> r. v <- r. !(x <- v. x -> result. 0);
+# ONE | INC | x <- one. &r. r->inc. x -> r. v <- r. !(x <- v. x -> result. 0);
 
 
 # The following two tests make sure that the resulting number outputs _succ before _zero.
@@ -50,12 +54,12 @@ ONE | INC | x <- one. &r. r->inc. x -> r. v <- r. !(x <- v. x -> result. 0);
 # | _zero -> d. 0
 # | ...
 # With no something -> e. 0 at the top level
-TWO | INC | x <- two. &r. r->inc. x -> r. v <- r.
-                          x <- v. (x -> a. 0 |
-                          x <- v. (x -> b. 0 |
-                          x <- v. (x -> c. 0 |
-                          x <- v. (x -> d. 0 |
-                          x <- v. (x -> e. 0)))));
+# TWO | INC | x <- two. &r. r->inc. x -> r. v <- r.
+#                           x <- v. (x -> a. 0 |
+#                           x <- v. (x -> b. 0 |
+#                           x <- v. (x -> c. 0 |
+#                           x <- v. (x -> d. 0 |
+#                           x <- v. (x -> e. 0)))));
 
 # Expected output:
 #   _succ -> a. 0
@@ -64,10 +68,10 @@ TWO | INC | x <- two. &r. r->inc. x -> r. v <- r.
 # | _zero -> d. 0
 # | ...
 # With no something -> e. 0 at the top level
-# ONE | INC | x <- one. &r. r->inc. x -> r. v <- r.
-#                       &r. r->inc. v -> r. v2 <- r.
-#                         x <- v2. (x -> a. 0 |
-#                         x <- v2. (x -> b. 0 |
-#                         x <- v2. (x -> c. 0 |
-#                         x <- v2. (x -> d. 0 |
-#                         x <- v2. (x -> e. 0)))));
+ONE | INC | x <- one. &r. r->inc. x -> r. v <- r.
+                      &r. r->inc. v -> r. v2 <- r.
+                        x <- v2. (x -> a. 0 |
+                        x <- v2. (x -> b. 0 |
+                        x <- v2. (x -> c. 0 |
+                        x <- v2. (x -> d. 0 |
+                        x <- v2. (x -> e. 0)))));
