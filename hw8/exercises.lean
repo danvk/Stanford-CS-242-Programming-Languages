@@ -10,32 +10,9 @@ theorem and_commute (p q : Prop) :
   (p ∧ q → q ∧ p) ∧
   (q ∧ p → p ∧ q) :=
 begin
-  apply and.intro,
-  {
-    intros p_and_q,
-    apply and.intro,
-    {
-      cases p_and_q,
-      assumption,
-    },
-    {
-      cases p_and_q,
-      assumption,
-    }
-  },
-  {
-    intros q_and_p,
-    apply and.intro,
-    {
-      cases q_and_p,
-      assumption,
-    },
-    {
-      cases q_and_p,
-      assumption,
-    }
-  }
-end 
+  -- FILL IN HERE.
+  sorry
+end
 
 -- Exercise: introduction and elimination rules of ∨ and ¬.
 -- Tactics used in reference solution:
@@ -43,7 +20,7 @@ end
 theorem demorgan (p q : Prop) :
   (¬(p ∨ q) → (¬p ∧ ¬q)) ∧
   ((¬p ∧ ¬q) → ¬(p ∨ q)) :=
-begin 
+begin
   -- FILL IN HERE.
   sorry
 end
@@ -52,9 +29,9 @@ end
 -- Tactics used in the reference solution:
 --   intros, apply, have, split, cases, assumption.
 theorem and_forall_distribute (α : Type) (p q : α → Prop) :
-  ((∀ x, p x ∧ q x) → (∀ x, p x) ∧ (∀ x, q x)) ∧ 
+  ((∀ x, p x ∧ q x) → (∀ x, p x) ∧ (∀ x, q x)) ∧
   ((∀ x, p x) ∧ (∀ x, q x) → (∀ x, p x ∧ q x)) :=
-begin 
+begin
   -- FILL IN HERE.
   sorry
 end
@@ -64,9 +41,9 @@ end
 --   existsi, cases ... with ..., split, cases,
 --   intros, left, right, assumption.
 theorem or_exists_distribute (α : Type) (p q : α → Prop) :
-  ((∃ x, p x ∨ q x) → (∃ x, p x) ∨ (∃ x, q x)) ∧ 
+  ((∃ x, p x ∨ q x) → (∃ x, p x) ∨ (∃ x, q x)) ∧
   ((∃ x, p x) ∨ (∃ x, q x) → (∃ x, p x ∨ q x)) :=
-begin 
+begin
   -- FILL IN HERE.
   sorry
-end 
+end
