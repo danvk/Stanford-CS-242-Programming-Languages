@@ -140,11 +140,9 @@ begin
   {
     intro h,
     cases h with hp hq,  -- is it weird to have "cases" with only one case?
-    {
-      -- goal: ∀ (x : α), p x ∧ q x
-      assume x : α,
-      exact ⟨ (hp x), (hq x) ⟩
-    }
+    -- goal: ∀ (x : α), p x ∧ q x
+    assume x : α,
+    exact ⟨ (hp x), (hq x) ⟩
   }
 end
 
@@ -153,9 +151,38 @@ end
 --   existsi, cases ... with ..., split, cases,
 --   intros, left, right, assumption.
 theorem or_exists_distribute (α : Type) (p q : α → Prop) :
-  ((∃ x, p x ∨ q x) → (∃ x, p x) ∨ (∃ x, q x)) ∧
-  ((∃ x, p x) ∨ (∃ x, q x) → (∃ x, p x ∨ q x)) :=
+  ((∃ x, p x ∨ q x) ↔ ((∃ x, p x) ∨ (∃ x, q x))) :=
 begin
-  -- FILL IN HERE.
-  sorry
+  split,
+  {
+    intro h,
+    cases h with x hpq,
+    cases hpq,
+    {
+      left,
+      existsi x,
+      assumption
+    },
+    {
+      right,
+      existsi x,
+      assumption,
+    }
+  },
+  {
+    intro h,
+    cases h,
+    {
+      cases h with x,
+      existsi x,
+      left,
+      assumption
+    },
+    {
+      cases h with x,
+      existsi x,
+      right,
+      assumption
+    }
+  }
 end
