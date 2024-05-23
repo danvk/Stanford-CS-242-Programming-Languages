@@ -78,57 +78,36 @@ begin
   {
     -- Goal: ¬(p ∨ q) → ¬p ∧ ¬q
     intro h, -- h: ¬(p ∨ q); goal: ¬p ∧ ¬q; (equivalently, h : p ∨ q → false)
-    by_cases hp : p, -- Consider cases for P
+    split,
     {
-      -- Case 1: p is true; goal is ¬p ∧ ¬q
-      -- idea: since p is true, ¬p is false, so ¬p ∧ ¬q is also false
-      split,
-      {
-        -- goal: ¬p; this feels too roundabout! I have p and need to prove ¬p.
-        intro nhp,
-        apply h,
-        left,
-        assumption
-      },
-      {
-        -- goal: ¬q
-        intro hq,
-        apply h,
-        -- Either of these works… is there a better way to do this?
-        -- exact (or.intro_left q hp)
-        exact (or.intro_right  p hq)
-      }
+      -- goal: ¬p; this feels too roundabout! I have p and need to prove ¬p.
+      intro hp,
+      apply h,
+      left,
+      assumption
     },
     {
-      -- Case 2: ¬p, goal is ¬p ∧ ¬q
-      split,
-      assumption,
-      {
-        -- goal is ¬q
-        intro hq,
-        apply h,
-        right,
-        assumption,
-      }
+      -- goal: ¬q
+      intro hq,
+      apply h,
+      right,
+      assumption
     }
   },
   {
     -- Goal: ¬p ∧ ¬q → ¬(p ∨ q)
     intro h, -- h: ¬p ∧ ¬q
     intro hpq, -- hpq: p ∨ q
-    cases h with nhp nhq, -- Consider cases for ¬P ∨ ¬Q
+    cases hpq with hp hq,
     {
-      -- hp: ¬p, hq: ¬q, goal: false
-      cases hpq with hp hq,
-      {
-        apply nhp,
-        assumption,
-      },
-      {
-        apply nhq,
-        assumption,
-      }
+      -- goal: false
+      apply h.left,
+      assumption,
     },
+    {
+      apply h.right,
+      assumption,
+    }
   }
 end
 
