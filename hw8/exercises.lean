@@ -29,6 +29,17 @@ end
 
 -- #print test
 
+variables (α : Type*) (r : α → α → Prop)
+variable  trans_r : ∀ x y z, r x y → r y z → r x z
+
+variables a b c : α
+variables (hab : r a b) (hbc : r b c)
+
+#check trans_r    -- ∀ (x y z : α), r x y → r y z → r x z
+#check trans_r a b c
+#check trans_r a b c hab
+#check trans_r a b c hab hbc
+
 -- Exercise: introduction and elimination rules of ∧ and →.
 -- Tactics used in reference solution:
 --   split, cases, intros, assumption.
@@ -46,6 +57,8 @@ begin
       intros q p,
       exact (and.intro p q),
 end
+-- how would I use and_commute1 here?
+-- could this be rewritten using ↔?
 
 -- Exercise: introduction and elimination rules of ∨ and ¬.
 -- Tactics used in reference solution:
@@ -55,7 +68,14 @@ theorem demorgan (p q : Prop) :
   ((¬p ∧ ¬q) → ¬(p ∨ q)) :=
 begin
   -- FILL IN HERE.
-  sorry
+  apply and.intro,
+  intro h,
+    -- apply or.elim,
+    sorry,
+  intro h,
+    cases h with hnp hnq,
+    apply not.intro,
+    sorry
 end
 
 -- Exercise: introduction and elimination rules of ∀.
