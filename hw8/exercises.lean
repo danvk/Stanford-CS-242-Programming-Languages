@@ -77,7 +77,7 @@ begin
   split, -- Split the bi-implication into two implications
   {
     -- Goal: ¬(p ∨ q) → ¬p ∧ ¬q
-    intro h, -- h: ¬(p ∨ q); goal: ¬p ∧ ¬q; aka p ∨ q → false
+    intro h, -- h: ¬(p ∨ q); goal: ¬p ∧ ¬q; (equivalently, h : p ∨ q → false)
     by_cases hp : p, -- Consider cases for P
     {
       -- Case 1: p is true; goal is ¬p ∧ ¬q
