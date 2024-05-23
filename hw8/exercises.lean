@@ -111,15 +111,41 @@ begin
   }
 end
 
+-- "The canonical way to prove ∀ x : α, p x is to take an arbitrary x, and prove p x."
+
 -- Exercise: introduction and elimination rules of ∀.
 -- Tactics used in the reference solution:
 --   intros, apply, have, split, cases, assumption.
 theorem and_forall_distribute (α : Type) (p q : α → Prop) :
-  ((∀ x, p x ∧ q x) → (∀ x, p x) ∧ (∀ x, q x)) ∧
-  ((∀ x, p x) ∧ (∀ x, q x) → (∀ x, p x ∧ q x)) :=
+  ((∀ x, p x ∧ q x) ↔ (∀ x, p x) ∧ (∀ x, q x)) :=
 begin
-  -- FILL IN HERE.
-  sorry
+  split,
+  {
+    intro h,
+    split,
+    {
+      -- goal: ∀ (x : α), p x
+      assume x : α,  -- assume introduces x : α but also changes the goal to p x
+      exact (h x).left,
+      -- more long-winded version:
+      -- have hpx: p x, from (h x).left,
+      -- assumption
+    },
+    {
+      -- goal: ∀ (x : α), q x
+      assume x : α,
+      exact (h x).right,
+    }
+  },
+  {
+    intro h,
+    cases h with hp hq,  -- is it weird to have "cases" with only one case?
+    {
+      -- goal: ∀ (x : α), p x ∧ q x
+      assume x : α,
+      exact ⟨ (hp x), (hq x) ⟩
+    }
+  }
 end
 
 -- Exercise: introduction and elimination rules of ∃.
