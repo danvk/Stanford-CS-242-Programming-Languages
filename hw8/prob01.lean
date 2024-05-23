@@ -5,7 +5,8 @@ import .src.lnat
 lemma inversion :
   ∀ e : Expr, (val e) → (∃ n : ℕ, e = Expr.Num n) :=
 begin
-  -- FILL IN HERE
-  sorry
+  intros e hv,
+  cases hv with x,
+  existsi x,
+  refl,
 end
-
