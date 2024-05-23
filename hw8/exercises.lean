@@ -88,7 +88,7 @@ begin
         intro nhp,
         apply h,
         left,
-        exact nhp,
+        assumption
       },
       {
         -- goal: ¬q
@@ -102,16 +102,13 @@ begin
     {
       -- Case 2: ¬p, goal is ¬p ∧ ¬q
       split,
-      {
-        -- goal is ¬p
-        exact hp,
-      },
+      assumption,
       {
         -- goal is ¬q
         intro hq,
         apply h,
         right,
-        exact hq,
+        assumption,
       }
     }
   },
@@ -125,11 +122,11 @@ begin
       cases hpq with hp hq,
       {
         apply nhp,
-        exact hp,
+        assumption,
       },
       {
         apply nhq,
-        exact hq,
+        assumption,
       }
     },
   }
