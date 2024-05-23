@@ -158,31 +158,13 @@ begin
     intro h,
     cases h with x hpq,
     cases hpq,
-    {
-      left,
-      existsi x,
-      assumption
-    },
-    {
-      right,
-      existsi x,
-      assumption,
-    }
+    { left, existsi x, assumption },
+    { right, existsi x, assumption }
   },
   {
     intro h,
     cases h,
-    {
-      cases h with x,
-      existsi x,
-      left,
-      assumption
-    },
-    {
-      cases h with x,
-      existsi x,
-      right,
-      assumption
-    }
+    { cases h with x, existsi x, left, assumption },
+    { cases h with x, existsi x, right, assumption }
   }
 end
