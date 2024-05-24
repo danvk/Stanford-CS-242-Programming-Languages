@@ -50,11 +50,11 @@ lemma eval_trans {a b c : Expr}
 
 theorem eval_full :
   e1 ↦ e2 :=
-  eval_trans eval_e1e1b eval_e1be2
+begin
+  apply eval.ELeft
+
+end
+  -- eval_trans eval_e1e1b eval_e1be2
   -- eval.ELeft Op.Add e1left (Expr.Num 2) e1right (eval.EOp Op.Mul 1 2)
   -- eval (Expr.Op Op.Add e1left e1right) (Expr.Num 5)
 
--- begin
---   apply eval.ELeft Op.Add,
---   apply eval.EOp,
--- end
