@@ -4,6 +4,16 @@ import .prob01
 import .prob04
 import .prob05
 
+-- If e1↦e2, then e1↦*e2 as well.
+lemma small_to_big
+  (e1 e2 : Expr): (e1↦e2) → (e1↦*e2) :=
+begin
+  intro h,
+  apply evals.CStep,
+  show Expr, from e2,
+  simp*,
+end
+
 theorem totality :
   ∀ e : Expr, ∃ e' : Expr, (val e') ∧ (e ↦* e') :=
 begin
@@ -23,7 +33,6 @@ begin
     cases x with ve2' he2e2',
     cases ve1' with n1,
     cases ve2' with n2,
-    -- cases h2 with e2',
     existsi (Expr.Num (apply_op op n1 n2)),
     split,
     apply val.VNum,
@@ -43,10 +52,7 @@ begin
     apply transitive_right,
     assumption,
     assumption,
-    -- Expr.Op op (Expr.Num n1) (Expr.Num n2)↦*Expr.Num (apply_op op n1 n2)
-    apply evals.CStep,
-    show Expr, from Expr.Num (apply_op op n1 n2),
+    apply small_to_big,
     apply eval.EOp,
-    apply evals.CRefl,
   },
 end
