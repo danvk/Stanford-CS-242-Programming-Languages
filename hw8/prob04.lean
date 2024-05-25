@@ -27,7 +27,12 @@ begin
     -- e = (Expr.Op op e e2)
     -- e' = (Expr.Op op emid e2)
     -- e'' = (Expr.Op op e' e2)
-    apply evals.CStep (Expr.Op op e e2) (Expr.Op op emid e2) (Expr.Op op e' e2),
+    -- This is what I came up with:
+    -- apply evals.CStep (Expr.Op op e e2) (Expr.Op op emid e2) (Expr.Op op e' e2),
+    -- This is what Rylan has:
+    apply evals.CStep,
+    show Expr, from Expr.Op op emid e2,
+    -- our proofs are the same from here:
     apply eval.ELeft,
     exact hsmall,
     exact hmide',
