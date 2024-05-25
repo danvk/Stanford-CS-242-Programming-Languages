@@ -14,7 +14,7 @@ begin
   -- why can't I use case CRefl here? CRefl
   case evals.CRefl : e {
     -- Here we have e1 = e1' = e; this is an instance of CRefl
-    apply evals.CRefl,
+    refl,
   },
   case evals.CStep : e emid e' hsmall hbig hmide' {
     -- e ↦ emid and emid ↦* e'
