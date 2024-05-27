@@ -56,6 +56,7 @@ begin
   assumption,
 end
 
+-- If $Γ ⊢ e : nat$, then $(Γ+1) ⊢ e : nat$ as well
 lemma typnat_more { i : ℕ } { expr: Expr } :
   typnat i expr → typnat (i + 1) expr :=
 begin
@@ -91,9 +92,9 @@ lemma substitution :
   (typnat i e) → (typnat (i+1) e')
   → (subst i e e' e'') → (typnat i e'') :=
 begin
-  intros e e' e'' i hnatie hnati1e' hsubst,
+  intros _ _ _ _ h h' hsubst,
   -- ideas:
-  -- induction on hnati1e' or hnatie.
+  -- induction on h or h'.
   -- induction on hsubst
   induction hsubst,
   case SNum: i n ex {
@@ -101,37 +102,32 @@ begin
   },
   case SOp: op i e1 e2 e1' e2' e' hsubste1 hsubste2 htne1 htne2 {
     -- There's a "let" tactic for introducing new variables!
-    cases (typnat_op hnati1e') with tn1e1 tn2e2,
+    cases (typnat_op h') with tn1e1 tn2e2,
     apply typnat.TOp,
-    exact htne1 hnatie tn1e1,
-    exact htne2 hnatie tn2e2,
+    exact htne1 h tn1e1,
+    exact htne2 h tn2e2,
   },
   case SVarEq: i j e' ieqj {
     assumption,
   },
   case SVarNeq: i j e' inej {
-    -- have hnati1e': typnat (i + 1) (Expr.Var j)
+    -- have h: typnat (i + 1) (Expr.Var j)
     -- TVar (j i : ℕ) : j < i → typnat i (Expr.Var j)
-    cases (plus1_cases (typnat_var hnati1e')),
-    {
-      contradiction,
-    },
+    cases (plus1_cases (typnat_var h')),
+    contradiction,  -- can't have both i=j and i≠j
     {
       apply typnat.TVar,
-      exact h,
+      exact h_1,
     },
   },
   case SLet: e1 e2 e1' e2' e' i hsubste1 hsubste2 htne1 htne2 {
     -- are all these terms coming from recursively applying this lemma? (YES)
-    let x := htne1 hnatie,
-    let y := htne2 (typnat_more hnatie),
-    cases hnati1e',
-    rename hnati1e'_ᾰ tne1,   -- typnat (i+1) e1
-    rename hnati1e'_ᾰ_1 tne2, -- typnat (i+2) e2
-    let x2 := x tne1,
-    let y2 := y tne2,
+    cases h',
+    rename h'_ᾰ tne1,   -- typnat (i+1) e1
+    rename h'_ᾰ_1 tne2, -- typnat (i+2) e2
     apply typnat.TLet,
-    assumption,
-    assumption,
+    exact htne1 h tne1,
+    let hplus := typnat_more h,
+    exact htne2 hplus tne2,
   },
 end
