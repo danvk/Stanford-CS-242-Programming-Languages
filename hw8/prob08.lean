@@ -56,6 +56,12 @@ begin
   assumption,
 end
 
+lemma typnat_more { i : ℕ } { expr: Expr } :
+  typnat i expr → typnat (i + 1) expr := sorry
+
+-- If i ⊢ e : nat and i+1 ⊢ e' : nat, then i ⊢ e'[ˆı:=e] : nat
+-- We can substitute an expression from (typnat i) into an
+-- expression from (typenat i+1) and get an expression of (typenat i).
 lemma substitution :
   ∀ e e' e'' : Expr, ∀ i : ℕ,
   (typnat i e) → (typnat (i+1) e')
@@ -92,9 +98,16 @@ begin
     },
   },
   case SLet: e1 e2 e1' e2' e' i hsubste1 hsubste2 htne1 htne2 {
-    -- are all these terms coming from recursively applying this lemma?
+    -- are all these terms coming from recursively applying this lemma? (YES)
     let x := htne1 hnatie,
-
-    sorry,
+    let y := htne2 (typnat_more hnatie),
+    cases hnati1e',
+    rename hnati1e'_ᾰ tne1,   -- typnat (i+1) e1
+    rename hnati1e'_ᾰ_1 tne2, -- typnat (i+2) e2
+    let x2 := x tne1,
+    let y2 := y tne2,
+    apply typnat.TLet,
+    assumption,
+    assumption,
   },
 end
