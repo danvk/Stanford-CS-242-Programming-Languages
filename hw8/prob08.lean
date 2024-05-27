@@ -38,12 +38,23 @@ end
 
 lemma typnat_op { i : ℕ } { op : Op } { e1 e2 : Expr } :
   typnat i (Expr.Op op e1 e2) →
-  typnat i e1 ∧ typnat i e2 := sorry
+  typnat i e1 ∧ typnat i e2 :=
+begin
+  intro h,
+  cases h,
+  -- this is kind of cryptic! Why can't I give these variables names?
+  exact ⟨ h_ᾰ, h_ᾰ_1 ⟩,
+end
 
 -- TVar (j i : ℕ) : j < i → typnat i (Expr.Var j)
 lemma typnat_var { i j : ℕ } :
   typnat i (Expr.Var j) →
-  i > j := sorry
+  i > j :=
+begin
+  intro h,
+  cases h,
+  assumption,
+end
 
 lemma substitution :
   ∀ e e' e'' : Expr, ∀ i : ℕ,
