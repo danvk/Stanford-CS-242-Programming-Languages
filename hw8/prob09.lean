@@ -27,10 +27,11 @@ begin
   case EOp: e e' op {
     apply typnat.TNum,
   },
-  case DLet: e1 e2 e2' hsubst {
+  case DLet: _ _ _ hsubst {
     cases tn0e,
     rename tn0e_ᾰ → tn0e1,
     rename tn0e_ᾰ_1 → tn1e2,
+    -- Why doesn't `exact substitution tn0e1 tn1e2 hsubst` work here?
     apply substitution,
     exact tn0e1,
     exact tn1e2,
