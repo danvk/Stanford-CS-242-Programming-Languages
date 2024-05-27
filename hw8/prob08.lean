@@ -9,31 +9,12 @@ import .src.lnatplus
 -- If a < b then a ≠ b.
 -- lemma lt_to_ne {a b : ℕ } : a < b → a ≠ b := sorry
 
-lemma plus1_cases { a b : ℕ } : a+1 > b → a=b ∨ a>b :=
+-- If a+1 > b, then either a=b or a>b
+lemma plus1_cases { a b : ℕ } : a+1 > b → b < a ∨ b = a :=
 begin
   intro a1gtb,
-  cases lt_trichotomy a b,
-  {
-    rename h a_lt_b,
-    -- a_lt_b: a < b
-    -- b < succ a => b <= a
-    -- a_lt_b -> a != b
-    -- let a_ne_b := lt_to_ne a_lt_b,
-    let b_le_a := nat.le_of_lt_succ a1gtb,
-    let w := not_lt_of_ge b_le_a,
-    contradiction,
-  },
-  cases h,
-  {
-    -- a = b
-    left,
-    exact h,
-  },
-  {
-    -- b < a
-    right,
-    exact h,
-  }
+  let b_le_a := nat.le_of_lt_succ a1gtb,
+  exact lt_or_eq_of_le b_le_a,
 end
 
 lemma typnat_op { i : ℕ } { op : Op } { e1 e2 : Expr } :
@@ -114,11 +95,14 @@ begin
     -- have h: typnat (i + 1) (Expr.Var j)
     -- TVar (j i : ℕ) : j < i → typnat i (Expr.Var j)
     cases (plus1_cases (typnat_var h')),
-    contradiction,  -- can't have both i=j and i≠j
     {
       apply typnat.TVar,
       exact h_1,
     },
+    {
+      let flip := ne.symm inej,  -- i≠j → j≠i
+      contradiction,
+    }
   },
   case SLet: e1 e2 e1' e2' e' i hsubste1 hsubste2 htne1 htne2 {
     -- are all these terms coming from recursively applying this lemma? (YES)
