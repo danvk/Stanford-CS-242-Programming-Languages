@@ -57,7 +57,31 @@ begin
 end
 
 lemma typnat_more { i : ℕ } { expr: Expr } :
-  typnat i expr → typnat (i + 1) expr := sorry
+  typnat i expr → typnat (i + 1) expr :=
+begin
+  intro h,
+  induction h,
+  case TNum: {
+    apply typnat.TNum,
+  },
+  case TOp: op e1 e2 i _ _ tn11 tn12 {
+    apply typnat.TOp,
+    assumption,
+    assumption,
+  },
+  case TVar: j i j_lt_i {
+    -- TVar (j i : ℕ) : j < i → typnat i (Expr.Var j)
+    -- need: j < i + 1
+    let z := j_lt_i.step,
+    apply typnat.TVar,
+    exact z,
+  },
+  case TLet: e1 e2 i tn1 tn2 tn11 tn12 {
+    apply typnat.TLet,
+    assumption,
+    assumption,
+  },
+end
 
 -- If i ⊢ e : nat and i+1 ⊢ e' : nat, then i ⊢ e'[ˆı:=e] : nat
 -- We can substitute an expression from (typnat i) into an
