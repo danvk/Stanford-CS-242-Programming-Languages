@@ -2,46 +2,27 @@
 -- Proving the following propositions is not mandatory,
 -- but is highly recommended. You will not submit this file.
 --=======================
-#eval let v := lean.version in let s := lean.special_version_desc in string.join
-["Lean (version ", v.1.repr, ".", v.2.1.repr, ".", v.2.2.repr, ", ",
-if s ≠ "" then s ++ ", " else s, "commit ", (lean.githash.to_list.take 12).as_string, ")"]
 
 lemma and_commute1 (p q : Prop) :
   (p ∧ q → q ∧ p) :=
-  assume h : p ∧ q,
-  -- assume hq : q,
-  -- assume hp : p,
-  -- and.intro (and.elim_right h) (and.elim_left h)
-  -- ⟨ (and.elim_right h), (and.elim_left h) ⟩
-  -- ⟨ (and.right h), (and.left h) ⟩
-  ⟨ h.right, h.left ⟩
+begin
+  assume h,
+  cases h with p q,
+  split,
+  repeat { assumption },
+end
 
 theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p :=
 begin
-  apply and.intro hp,
-  exact and.intro hq hp
-  -- apply and.intro,
-  -- exact hp,
-  -- apply and.intro,
-  -- exact hq,
-  -- exact hp
+  split,
+  assumption,
+  split,
+  assumption,
+  assumption,
+  -- apply and.intro hp,
+  -- exact and.intro hq hp
 end
 
--- #print test
-
-variables (α : Type*) (r : α → α → Prop)
-variable  trans_r : ∀ x y z, r x y → r y z → r x z
-
-variables a b c : α
-variables (hab : r a b) (hbc : r b c)
-
-#check trans_r    -- ∀ (x y z : α), r x y → r y z → r x z
-#check trans_r a b c
-#check trans_r a b c hab
-#check trans_r a b c hab hbc
-
--- A ↔ B
--- (A → B) ∧ (B → A)
 
 -- Exercise: introduction and elimination rules of ∧ and →.
 -- Tactics used in reference solution:
@@ -51,18 +32,9 @@ theorem and_commute (p q : Prop) :
   -- (p ∧ q → q ∧ p) ∧
   -- (q ∧ p → p ∧ q) :=
 begin
-  -- apply and.intro,
   split,
-    intro h,
-    -- apply and.cases_on h,
-    --  intros p q,
-    cases h with hp hq,
-      exact (and.intro hq hp),
-      -- exact ⟨ hq, hp ⟩,
-    intro h,
-    apply and.cases_on h,
-      intros q p,
-      exact (and.intro p q),
+  apply and_commute1,
+  apply and_commute1,
 end
 -- how would I use and_commute1 here?
 -- could this be rewritten using ↔?
@@ -76,38 +48,29 @@ theorem demorgan (p q : Prop) : ¬(p ∨ q) ↔ (¬p ∧ ¬q) :=
 begin
   split, -- Split the bi-implication into two implications
   {
-    -- Goal: ¬(p ∨ q) → ¬p ∧ ¬q
-    intro h, -- h: ¬(p ∨ q); goal: ¬p ∧ ¬q; (equivalently, h : p ∨ q → false)
+    assume hh,
     split,
+    -- any way to consolidate these two cases?
     {
-      -- goal: ¬p; this feels too roundabout! I have p and need to prove ¬p.
-      intro hp,
-      apply h,
+      assume np,
+      apply hh,
       left,
-      assumption
+      assumption,
     },
     {
-      -- goal: ¬q
-      intro hq,
-      apply h,
+      assume nq,
+      apply hh,
       right,
-      assumption
+      assumption,
     }
   },
   {
-    -- Goal: ¬p ∧ ¬q → ¬(p ∨ q)
-    intro h, -- h: ¬p ∧ ¬q
-    intro hpq, -- hpq: p ∨ q
-    cases hpq with hp hq,
-    {
-      -- goal: false
-      apply h.left,
-      assumption,
-    },
-    {
-      apply h.right,
-      assumption,
-    }
+    assume h,
+    intro hh,
+    cases h with np nq,
+    cases hh,
+    contradiction,
+    contradiction,
   }
 end
 
@@ -124,25 +87,23 @@ begin
     intro h,
     split,
     {
-      -- goal: ∀ (x : α), p x
-      assume x : α,  -- assume introduces x : α but also changes the goal to p x
+      assume x,
       exact (h x).left,
-      -- more long-winded version:
-      -- have hpx: p x, from (h x).left,
-      -- assumption
     },
     {
-      -- goal: ∀ (x : α), q x
-      assume x : α,
+      assume x,
       exact (h x).right,
     }
   },
   {
     intro h,
-    cases h with hp hq,  -- is it weird to have "cases" with only one case?
+    cases h with hp hq,  -- "cases" splits an and
     -- goal: ∀ (x : α), p x ∧ q x
-    assume x : α,
-    exact ⟨ (hp x), (hq x) ⟩
+    assume x,
+    split,
+    apply (hp x),
+    apply (hq x)
+    -- exact ⟨ (hp x), (hq x) ⟩
   }
 end
 
