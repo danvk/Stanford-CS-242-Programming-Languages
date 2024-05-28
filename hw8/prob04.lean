@@ -11,12 +11,11 @@ lemma transitive_left (op : Op) (e1 e1' e2 : Expr) :
 begin
   intros h1,
   induction h1,
-  -- why can't I use case CRefl here? CRefl
-  case evals.CRefl : e {
+  case CRefl : e {
     -- Here we have e1 = e1' = e; this is an instance of CRefl
     refl,
   },
-  case evals.CStep : e emid e' hsmall hbig hmide' {
+  case CStep : e emid e' hsmall hbig hmide' {
     -- e ↦ emid and emid ↦* e'
     -- Goal: (Expr.Op op e e2) ↦* (Expr.Op op e' e2)
     -- hsmall: e ↦ emid

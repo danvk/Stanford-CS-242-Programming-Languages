@@ -45,8 +45,8 @@ begin
     -- 3. via eval.EOp
     --    Expr.Op op (Expr.Num n1) (Expr.Num n2) ↦ Expr.Num (apply_op op n1 n2)
     -- put this all together via transitivity
-    transitivity Expr.Op op (Expr.Num n1) (Expr.Num n2),
-    transitivity Expr.Op op (Expr.Num n1) e2,
+    transitivity, -- Expr.Op op (Expr.Num n1) (Expr.Num n2),
+    transitivity, -- Expr.Op op (Expr.Num n1) e2,
     apply transitive_left,
     assumption,
     apply transitive_right,

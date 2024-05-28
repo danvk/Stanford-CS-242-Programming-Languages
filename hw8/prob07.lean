@@ -1,6 +1,8 @@
 -- IMPORTANT: See `src/lnat.lean` for the formalization of Lnat.
 import .src.lnat
 
+import .prob06
+
 -- (1*2) + (4/2) ↦* 4
 
 def a := Expr.Op Op.Mul (Expr.Num 1) (Expr.Num 2)
@@ -15,24 +17,19 @@ lemma evals_example :
 begin
   split,
   apply val.VNum,
-  apply evals.CStep,
-  show Expr, from Expr.Op Op.Add (Expr.Num 2) b,
+  transitivity, -- Expr.Op Op.Add (Expr.Num 2) b,
   {
-    -- (1*2) + (4/2) ↦ 2 + (4/2)
+    apply small_to_big,
     apply eval.ELeft,
     apply eval.EOp,
   },
-  apply evals.CStep,
-  show Expr, from Expr.Op Op.Add (Expr.Num 2) (Expr.Num 2),
+  transitivity, -- Expr.Op Op.Add (Expr.Num 2) (Expr.Num 2),
   {
-    -- 2 + (4/2) ↦ 2 + 2
+    apply small_to_big,
     apply eval.ERight,
     apply eval.EOp,
     apply val.VNum,
   },
-  apply evals.CStep,
-  show Expr, from Expr.Num 4,
-  -- 2 + 2 ↦ 4
+  apply small_to_big,
   apply eval.EOp,
-  apply evals.CRefl,
 end
