@@ -7,9 +7,10 @@ lemma and_commute1 (p q : Prop) :
   (p ∧ q → q ∧ p) :=
 begin
   assume h,
-  cases h with p q,
-  split,
-  repeat { assumption },
+  cases h with hp hq,
+  apply and.intro,
+  assumption,
+  assumption,
 end
 
 theorem test (p q : Prop) (hp : p) (hq : q) : p ∧ q ∧ p :=
@@ -36,8 +37,6 @@ begin
   apply and_commute1,
   apply and_commute1,
 end
--- how would I use and_commute1 here?
--- could this be rewritten using ↔?
 
 -- Exercise: introduction and elimination rules of ∨ and ¬.
 -- Tactics used in reference solution:
@@ -52,13 +51,13 @@ begin
     split,
     -- any way to consolidate these two cases?
     {
-      assume np,
+      assume hp,
       apply hh,
       left,
       assumption,
     },
     {
-      assume nq,
+      assume hq,
       apply hh,
       right,
       assumption,
