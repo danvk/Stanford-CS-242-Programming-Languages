@@ -60,15 +60,11 @@ lemma substitution :
   → (subst i e e' e'') → (typnat i e'') :=
 begin
   intros _ _ _ _ h h' hsubst,
-  -- ideas:
-  -- induction on h or h'.
-  -- induction on hsubst
   induction hsubst,
   case SNum: i n ex {
     apply typnat.TNum,
   },
   case SOp: op i e1 e2 e1' e2' e' hsubste1 hsubste2 htne1 htne2 {
-    -- There's a "let" tactic for introducing new variables!
     cases (typnat_op h') with tn1e1 tn2e2,
     apply typnat.TOp,
     exact htne1 h tn1e1,
@@ -78,12 +74,14 @@ begin
     assumption,
   },
   case SVarNeq: i j e' inej {
+    -- There's a "let" tactic for introducing new variables!
     -- have h: typnat (i + 1) (Expr.Var j)
     -- TVar (j i : ℕ) : j < i → typnat i (Expr.Var j)
-    let jlei := nat.le_of_lt_succ (typnat_var h'),
+    apply typnat.TVar,
+    let i1gtj := typnat_var h',  -- i+1 > j
+    let jlei := nat.le_of_lt_succ i1gtj,  -- i+1 > j → j≤i
     let jnei := ne.symm inej,  -- i≠j → j≠i
     let jlti := lt_of_le_of_ne jlei jnei,  -- j≤i ∧ j≠i -> j < i
-    apply typnat.TVar,
     assumption,
   },
   case SLet: e1 e2 e1' e2' e' i hsubste1 hsubste2 htne1 htne2 {
