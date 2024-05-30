@@ -9,7 +9,13 @@
 theorem and_commute (p q : Prop) :
   (p ∧ q ↔ q ∧ p) :=
 begin
-  sorry
+  split,
+  repeat {
+    intro pq,
+    cases pq,
+    split,
+    repeat { assumption },
+  }
 end
 
 -- Exercise: introduction and elimination rules of ∨ and ¬.
@@ -18,8 +24,31 @@ end
 theorem demorgan (p q : Prop) :
   ¬(p ∨ q) ↔ (¬p ∧ ¬q) :=
 begin
-  -- FILL IN HERE.
-  sorry
+  split,
+  {
+    intro npq, -- ¬(p ∨ q) = (p ∨ q) -> false
+    split,
+    {
+      -- Goal: ¬p = p -> false
+      intro hp,
+      apply npq,
+      left,
+      assumption,
+    },
+    {
+      intro hp,
+      apply npq,
+      right,
+      assumption,
+    }
+  },
+  {
+    intro npq,
+    cases npq,
+    intro pq,
+    cases pq,
+    repeat { contradiction },
+  }
 end
 
 -- Exercise: introduction and elimination rules of ∀.

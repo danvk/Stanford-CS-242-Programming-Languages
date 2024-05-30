@@ -12,7 +12,30 @@ import .prob01
 
 theorem progress :
   ∀ e : Expr, (val e) ∨ (∃ e', e ↦ e') :=
-begin 
-  -- FILL IN HERE.
-  sorry
-end 
+begin
+  assume e,
+  induction e,
+  case Num: n {
+    left,
+    apply val.VNum,
+  },
+  case Op: op e1 e2 p1 p2 {
+    cases p1,
+    {
+      cases p2,
+      {
+        right,
+        cases p1 with n1,
+        cases p2 with n2,
+        existsi (Expr.Num (apply_op op n1 n2)),
+        apply eval.EOp,
+      },
+      {
+
+      }
+    },
+    {
+
+    }
+  }
+end
